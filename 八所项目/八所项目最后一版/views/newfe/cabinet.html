@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>保密柜</title>
+  <!-- 作者 -->
+  <meta name="author" content="yKoala">
+  <!-- 网页描述 -->
+  <meta name="description" content="系统设置--保密柜">
+  <!-- 关键字使用","分隔 -->
+  <meta name="keywords" content="保密柜">
+  <!-- 禁止浏览器从本地机的缓存中调阅页面内容 -->
+  <meta http-equiv="Pragma" content="no-cache">
+  <!-- 用来防止别人在框架里调用你的页面 -->
+  <meta http-equiv="Window-target" content="_top">
+  <!-- content的参数有all，none，index，noindex，follow，nofollow，默认是all -->
+  <meta name="robots" content="none">
+  <!-- 网页不会被缓存 -->
+  <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+  <!-- 解决部分兼容性问题，如果安装了GCF，则使用GCF来渲染页面，如果未安装GCF，则使用最高版本的IE内核进行渲染。 -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <!-- 页面按原比例显示 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/resource/css/branch.css">
+  <style type="text/css">
+  .cabinet {width: 12.6em;}
+  </style>
+</head>
+<body>
+  <div class="branch cabinet">
+    <div class="add cabinetAdd" style="text-align: left;">
+      <div>
+        <div>
+          <label for="numb">柜子编号：</label>
+          <input type="text" class="numb">
+        </div>
+        <div>
+          <label for="numberN">柜门数量：</label>
+          <input type="text" class="numberN">
+        </div>
+      </div>
+      <div>
+        
+        <div>
+          <label for="numberN">网络地址：</label>
+          <input type="text" class="adress">
+        </div>
+        <div>
+          <label for="port">网络端口：</label>
+          <input type="text" class="port">
+        </div>
+      </div>
+      <div>
+        
+        <div class="selectD">
+          <label for="">放置位置：</label>
+          <div><p class="selectP posText"></p><span class="selectDown"></span></div>
+          <ul class="selectDownContent pos">
+            <li lId="123">1232</li>
+            <li>1232</li>
+            <li>1232</li>
+            <li>1232</li>
+            <li>1232</li>
+          </ul>
+        </div>
+        <button class="toAdd" style="vertical-align: middle;margin-top: 0;">增加</button>
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>柜子编号</th>
+          <th>所属部门</th>
+          <th>网络地址</th>
+          <th>网络端口</th>
+          <th>柜门数量</th>
+          <th>放置位置</th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody class="addContent">
+      </tbody>
+    </table>
+    <div id="IDlaypage"></div>
+    <div class="sureEdit sureC">
+      <div class="sTitle">编辑部门处室信息<span class="toClose">X</span></div>
+      <div class="editBodyC">
+        <div>
+          <label for="numb">柜子编号：</label>
+          <input type="text" class="numb" id="numberModify">
+          <input type="hidden" class="numb" id="cabinetIdModify">
+        </div>
+        <div>
+          <label for="numberN">柜门数量：</label>
+          <input type="text" class="numberN" id="lattice_countModify">
+        </div>
+        <div>
+          <label for="numberN">网络地址：</label>
+          <input type="text" class="adress" id="ip_addressModify">
+        </div>
+        <div>
+          <label for="numb">网络端口：</label>
+          <input type="text" class="port" id="portModify">
+        </div>
+        <div class="selectD">
+          <label for="">放置位置：</label>
+          <div><p class="selectP posText"  id="location_name_modify" lid=""></p><span class="selectDown"></span></div>
+          <ul class="selectDownContent pos">
+          </ul>
+        </div>
+        <div class="toSaveC"><button>保存</button></div>
+      </div>
+    </div>
+  </div>
+  <div class="errorBox"></div>
+  <div id="shadow"></div>
+  <script src="/resource/js/jquery.min.js"></script>
+  <script src="/resource/js/common.js"></script>
+  <script src="/resource/js/laypage.js"></script>
+  <script>
+  $(function(){
+    //动态改变字体大小
+      $("body").css("fontSize",$("#body", parent.document).css("fontSize"));
+      window.onresize = function(){
+        $("body").css("fontSize",$("#body", parent.document).css("fontSize"));
+      }
+    //发送获取初始数据
+    var cabinetQuerryUrl = "/depart/cabinet/query";
+    var cabinetQuerryType = "get";
+    var cabinetQuerryData = {cabinetId:0};
+    var cabinetQuerrySuc = function(res){
+      if(res.type==0){
+		dataRender({
+       		laypageId:'IDlaypage',
+       		listMain:$(".addContent"),
+       		data:res.data.cabinetStatisticList, //数据
+       		itemHtml:function(index,el){
+       			//原代码开始
+				return '<tr id_cabinet_location="'+el.id_cabinet_location+'" locationName="'+el.locationName+'" lattice_count="'+el.lattice_count+'" port="'+el.port+'" ip_address="'+el.ip_address+'" deptName="'+el.deptName+'" number="'+el.number+'" subDeptId="'+el.sub_depart_id+'" cabinetId="'+ el.cabinet_id +'" idDept="'+ el.id_dept +'">'+
+				'<td>'+ el.number +'</td>'+
+				'<td>'+ el.deptName +'</td>'+
+				'<td>'+ el.ip_address +'</td>'+
+				'<td>'+ el.port +'</td>'+
+				'<td>'+ el.lattice_count  +'</td>'+
+				'<td>'+ el.locationName +'</td>'+
+				'<td class="redact"><button>编辑</button></td>'+
+				'<td class="delete"><button>删除</button></td>'+
+				'</tr>';
+       		}
+       	});
+        //roompos
+        var roomposHtml = "";
+        $.each(res.data.subDepartmentList,function(index, el) {
+          roomposHtml += '<li deptId="'+ el.parent_depart_id +'" lId="'+ el.subDepartmentId +'">'+ el.name +'</li>'
+        });
+        $(".roompos").html(roomposHtml)
+        //pos
+        var posHtml = "";
+        $.each(res.data.cabinetLocationList,function(index, el) {
+          posHtml += '<li lId="'+ el.id_cabinet_location +'">'+ el.name +'</li>'
+        });
+        $(".pos").html(posHtml)
+      }else if(res.type==4){
+        window.parent.location.href = "/html/login"
+      }else{
+        toastFn(res.detail);
+        return;
+      }
+    }
+    takeAjax(cabinetQuerryUrl,cabinetQuerryType,cabinetQuerryData,cabinetQuerrySuc)
+    //发送增加请求
+    $('body').click(function(){
+    	$(".selectDownContent:visible").fadeOut();
+    })
+    $(".selectDown").on('click', function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      $(".selectDownContent").fadeOut();
+      $(this).parent("div").siblings(".selectDownContent").fadeIn();
+    });
+    $(".selectDownContent").on('click', 'li', function(event) {
+      event.preventDefault();
+      /* Act on the event */
+      var lId = $(this).attr("lId");
+      var liText = $(this).text()
+      $(this).parent("ul").siblings('div').find("p").attr("lId",lId).text(liText)
+      $(".selectDownContent").fadeOut();
+    });
+    $(".toAdd").on('click', function(event) {
+      event.preventDefault();
+      var cabinetUrl = "/depart/cabinet/add";
+      var number = $.trim($(".numb:eq(0)").val());
+      var sub_dept_id = $.trim($(".roomposText:eq(0)").attr("lId"));
+      var ip_address = $.trim($(".adress:eq(0)").val());
+      var port = $.trim($(".port:eq(0)").val());
+      var lattice_count = $.trim($(".numberN:eq(0)").val());
+      var id_cabinet_location = $.trim($(".posText:eq(0)").attr('lId'));
+      var cabinetType = "post";
+      var cabinetData = {number:number,sub_dept_id:sub_dept_id,ip_address:ip_address,port:port,lattice_count:lattice_count,id_cabinet_location:id_cabinet_location};
+      if(!number){
+        toastFn("柜子编号不能为空");
+        return;
+      }
+      if(!ip_address){
+        toastFn("网络地址不能为空");
+        return;
+      }
+      if(!port){
+        toastFn("网络端口不能为空");
+        return;
+      }
+      if(!lattice_count){
+        toastFn("柜门数量不能为空");
+        return;
+      }
+      if(!id_cabinet_location){
+        toastFn("请选择放置位置");
+        return;
+      }
+      var branchSuc = function(res){
+        /*res = JSON.parse(res);*/;
+        if(res.type==0){
+          window.location.reload();
+        }else if(res.type==4){
+          window.parent.location.href = "/html/login"
+        }else{
+          toastFn(res.detail);
+          return;
+        }
+      }
+      takeAjax(cabinetUrl,cabinetType,cabinetData,branchSuc)
+    })
+    
+    //编辑
+    $("tbody").on('click', '.redact button', function(event) {
+      event.preventDefault();
+      var top=$('body,html').scrollTop()+20;
+      $("#shadow").fadeIn();
+      $(".sureEdit").css('top',top+'px').fadeIn();
+      var cabinet_id = $(this).parent("td").parent("tr").attr("cabinetId");
+      var number = $(this).parent("td").parent("tr").attr("number");
+      //var id_dept = $(this).parent("td").parent("tr").attr("id_dept");
+      var subDeptId = $(this).parent("td").parent("tr").attr("subDeptId");
+      var deptName = $(this).parent("td").parent("tr").attr("deptName");
+      var ip_address = $(this).parent("td").parent("tr").attr("ip_address");
+      var port = $(this).parent("td").parent("tr").attr("port");
+      var lattice_count = $(this).parent("td").parent("tr").attr("lattice_count");
+      var id_cabinet_location = $(this).parent("td").parent("tr").attr("id_cabinet_location");
+      var locationName = $(this).parent("td").parent("tr").attr("locationName");
+      //$(".editBody").attr({"departId":departId,"departName":departName})
+      
+      $("#cabinetIdModify").val(cabinet_id);
+      $("#lattice_countModify").val(lattice_count);
+      $("#ip_addressModify").val(ip_address);
+      $("#portModify").val(port);
+      $("#numberModify").val(number);
+      $("#sub_depart_name_modify").text(deptName);
+      $("#sub_depart_name_modify").attr('lid',subDeptId);
+      $("#location_name_modify").text(locationName);
+      $("#location_name_modify").attr('lid',id_cabinet_location);
+    });
+
+    //取消
+    $(".cancleEdit").click(function(event) {
+      /* Act on the event */
+       $(".toClose").click()
+    });
+    $(".toClose").on('click', function(event) {
+      event.preventDefault();
+      $(".sureEdit").fadeOut();
+      $("#shadow").fadeOut();
+    });
+
+    //确认修改
+    $(".toSaveC").on('click',function(event) {
+      event.preventDefault();
+      var cabinetUrl = "/depart/cabinet/update";
+      var number = $.trim($(".numb:eq(1)").val());
+      var sub_dept_id = $("#sub_depart_name_modify").attr("lid");
+      var ip_address = $.trim($(".adress:eq(1)").val());
+      var port = $.trim($(".port:eq(1)").val());
+      var lattice_count = $.trim($(".numberN:eq(1)").val());
+      var id_cabinet_location = $("#location_name_modify").attr("lid");
+      var cabinetId = $("#cabinetIdModify").val();
+      var cabinetType = "post";
+      var cabinetData = {cabinetId:cabinetId,number:number,sub_dept_id:sub_dept_id,ip_address:ip_address,port:port,lattice_count:lattice_count,id_cabinet_location:id_cabinet_location};
+      if(!number){
+        toastFn("柜子编号不能为空");
+        return;
+      }
+      if(!ip_address){
+        toastFn("网络地址不能为空");
+        return;
+      }
+      if(!port){
+        toastFn("网络端口不能为空");
+        return;
+      }
+      if(!lattice_count){
+        toastFn("柜门数量不能为空");
+        return;
+      }
+      if(!id_cabinet_location){
+        toastFn("请选择放置位置");
+        return;
+      }
+      var branchSuc = function(res){
+        /*res = JSON.parse(res);*/;
+        if(res.type==0){
+          window.location.reload();
+        }else if(res.type==4){
+          window.parent.location.href = "/html/login"
+        }else{
+          toastFn(res.detail);
+          return;
+        }
+      }
+      takeAjax(cabinetUrl,cabinetType,cabinetData,branchSuc)
+    });
+
+    //删除
+    $("table").on('click', '.delete button', function(event) {
+      event.preventDefault();
+      /* Act on the event */
+      var deleteUrl = "/depart/cabinet/delete";
+      var cabinetId = $(this).parent("td").parent("tr").attr("cabinetId");
+      var number = $(this).parent("td").parent("tr").attr("number");
+      if(!confirm("确认删除编号为:<"+number+">的柜子")){
+    		return ;
+    	}
+      var deleteData = {cabinetId:cabinetId};
+      var deleteType="post";
+      var deleteSuc = function(res){
+        if(res.type==0){
+          window.location.reload();
+        }else if(res.type==4){
+          window.parent.location.href = "/html/login"
+        }else{
+          toastFn(res.detail);
+          return;
+        }
+      }
+      takeAjax(deleteUrl,deleteType,deleteData,deleteSuc)
+    });
+    
+  })
+  </script>
+</body>
+</html>

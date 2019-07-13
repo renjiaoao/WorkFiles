@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>监控系统界面-第六版</title>
+   <!-- 编码格式 -->
+  <meta charset="UTF-8">
+  <!-- 作者 -->
+  <meta name="author" content="yKoala">
+  <!-- 网页描述 -->
+  <meta name="description" content="监控系统界面-第六版">
+  <!-- 关键字使用","分隔 -->
+  <meta name="keywords" content="监控系统界面-第六版">
+  <!-- 禁止浏览器从本地机的缓存中调阅页面内容 -->
+  <meta http-equiv="Pragma" content="no-cache">
+  <!-- 用来防止别人在框架里调用你的页面 -->
+  <meta http-equiv="Window-target" content="_top">
+  <!-- content的参数有all，none，index，noindex，follow，nofollow，默认是all -->
+  <meta name="robots" content="none">
+  <!-- 网页不会被缓存 -->
+  <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+  <!-- 解决部分兼容性问题，如果安装了GCF，则使用GCF来渲染页面，如果未安装GCF，则使用最高版本的IE内核进行渲染。 -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <!-- 页面按原比例显示 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!--[if lt IE 9]>
+     <script src="/resource/js/html5shiv.min.js"></script>
+     <script src="/resource/js/respond.min.js"></script>
+     <script src="/resource/js/pie.js"></script>
+  <![endif]-->
+  <link rel="stylesheet" href="/resource/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/resource/css/reset1.css">
+  <link rel="stylesheet" href="/resource/css/branch.css">
+  <link rel="stylesheet" href="/resource/css/monitoringImg.css">
+  <link rel="stylesheet" href="/resource/css/swiper.css">
+  <style type="text/css">
+
+	  html{
+	  	overflow: hidden;
+	  	overflow-y: auto;
+	  }
+	  body{
+		visibility: hidden;
+	  }
+	  .olC{
+	  	columns: 268px;
+	  	-o-columns: 268px;
+	  	-moz-columns: 268px;
+	  	-webkit-columns: 268px;
+	  }
+	  .olC>li{
+	  	width: 268px;
+	  }
+
+
+    .menu-right li{ font-size: 26px; line-height: 38px; padding: 6px 30px 6px 6px; cursor: pointer;}
+    .menu-right li:hover{background: #ddd;}
+  </style>
+
+</head>
+<body>
+  <div id="contentTotla">
+    <div id="header">
+      <i></i>
+      <span></span>
+      <!-- <a href="/html/logic/monitoringImg"></a> -->
+      <strong></strong>
+    </div>
+    <div class="totalMoni">
+      <div class="equStatusContainer">
+        <div class="smallTL"></div>
+        <div class="swiper-container equStatusCont">
+          <ul class="swiper-wrapper equStatus">
+            <!-- <li class="swiper-slide smallContainer">
+              <div class="iconBg"></div>
+              <div class="textC">
+                <h3>硬盘</h3>
+                <p>在位 <span class="firSpan">12</span>总数 <span>13</span></p>
+              </div>
+            </li> -->
+          </ul>
+        </div>
+        <div class="smallTR"></div>
+      </div>
+      <div class="statistics smallContainer">
+        <div class="iconBg"></div>
+        <div class="textC">
+          <!-- <h3>统计汇总</h3> -->
+          <p><span id="carrierAll">载体总数 <b></b></span><span id="carrierAllOn">在位总数 <b></b></span><span id="carrierAllOff">借出总数 <b></b></span></p>
+          <p><span id="goOutSpan" class="curPointer">正常外出 <b></b></span><span id="overTimeSpan" class="curPointer">外出逾期 <b></b></span><span id="carrierAbnormal" class="curPointer">异常载体 <b></b></span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="contentList">
+    <div class="toL"></div>
+    <div class="conList swiper-container">
+      <ul class="ulC swiper-wrapper" style="width: 10000px;">
+        <!-- <li class="liC">
+          <div class="title">CODE 01号柜</div>
+          <ol class="olC">
+            <li class="openDoor1 open">
+              <span class="doorNum">01</span>
+            </li>
+            <li class="openDoor2 open">
+              <span class="doorNum">02</span>
+            </li>
+            <li class="openDoor3 open">
+              <span class="doorNum">03</span>
+            </li>
+            <li class="closeDoor1 toClose">
+              <span class="doorNum">04</span>
+              <div class="smallTitle">李自成</div>
+            </li>
+            <li class="closeDoor toClose">
+              <span class="doorNum">05</span>
+              <div class="smallTitle">李自成</div>
+              <div class="smallContent">
+                <span class="diskIconA"></span>
+                <span class="laptopIconA"></span>
+                <span class="safeBoxIconA"></span>
+                <span class="desktopIcon"></span>
+                <span class="laptopIcon"></span>
+                <span class="safeBoxIcon"></span>
+                <span class="desktopIcon"></span>
+              </div>
+            </li>
+          </ol>
+        </li>
+        <li class="liC">
+          <div class="title">CODE 01号柜</div>
+          <ol>
+            <li></li>
+          </ol>
+        </li>
+        <li class="liC">
+          <div class="title">CODE 01号柜</div>
+          <ol>
+            <li></li>
+          </ol>
+        </li> -->
+      </ul>
+    </div>
+    <div class="toR"></div>
+  </div>
+  <div id="footer">
+    <div class="footerContent">
+      <strong>© 2010-2018</strong>
+      空军研究院保密委员会监制
+      <i></i>
+      <span id="currentTimes"></span>
+    </div>
+  </div>
+  
+  <div id="menu-right" style="position: absolute;display: none; background: white; z-index: 1000000000000">
+  	<ul class="menu-right">
+  		<li>系统设置</li>
+  		<li>综合查询</li>
+  	</ul>
+  </div>
+  <div class="errorBox"></div>
+<div id="shadow"></div>
+
+<div class="popLayer" id="tongjiList" style="top: 146px;">
+	<div class="sTitle"><span class="popLayerTitle"></span><span class="popLayerClose">X</span></div>
+	<div class="popLayerBody maxH5em">
+		<table class="tableBox fSB60 tdBorder1 mB0">
+			<thead><tr><th>柜体号</th><th>柜门号</th><th>是否在位</th><th>载体编号</th></tr></thead>
+			<tbody class="addContent">
+			</tbody>
+		</table>
+	</div>
+</div>
+
+ <script src="/resource/js/jquery.min.js"></script>
+ <script src="/resource/js/swiper.js"></script>
+ <script src="/resource/js/common.js"></script>
+<script>
+  zoom = 1;
+  function resize() {
+    zoom = (window.innerWidth > 1200 ? window.innerWidth : 1200) / 1920;
+    document.body.style.zoom = zoom;
+    if(!$('body').css('zoom')){
+	    document.getElementById('contentTotla').style.bottom='auto';
+	    document.getElementById('contentTotla').style.marginTop ='0px';
+	    var tA=document.getElementById('contentTotla').offsetHeight*(1-zoom);
+	    var tB=document.getElementById('contentList').offsetHeight*(1-zoom);
+	    document.getElementById('contentTotla').style.transform = "scale("+zoom+")";
+	    document.getElementById('contentTotla').style.transformOrigin='left bottom 0px';
+	    document.getElementById('contentTotla').style.position='relative';
+	    document.getElementById('contentTotla').style.bottom='-'+tB+'px';
+	    document.getElementById('contentTotla').style.marginTop ='-'+(tA+tB)+'px';
+	    document.getElementById('contentList').style.transform = "scale("+zoom+")";
+	    document.getElementById('contentList').style.transformOrigin='left bottom 0px';
+    }
+    document.body.style.visibility ='visible';
+  }
+</script>
+<script>
+function popLayerFn(option){
+	var op=$.extend({
+		el:'.popLayer',
+		title:'系统信息'
+	},option);
+	$('.popLayerClose',op.el).click(function(event){ event.preventDefault(); $(this).closest('.popLayer').add("#shadow").fadeOut(); });
+	$('.popLayerTitle',op.el).text(op.title);
+	$(op.el)[0].open=function(ops){
+		var ops=$.extend({
+			width:'80%',
+			height:parseInt($(window).height()*0.8),
+			cssData:{}
+		},ops),cssData=$.extend({ top : parseInt($(window).height()*0.1) },ops.cssData);
+		$(op.el).width(ops.width).height(ops.height).css(cssData).add("#shadow").fadeIn();
+		ops.title&&$('.popLayerTitle',op.el).text(ops.title);
+		ops.callback&&ops.callback();
+	}
+	op.callback&&op.callback();
+}
+  $(function(){
+	resize();
+  	headerLink();
+    HtmlFontsize($('.popLayer'));
+    $(window).resize(function() { HtmlFontsize($('.sureEdit')); resize(); });
+	//弹层
+	popLayerFn({
+		el:'#tongjiList',
+		title:'状态汇总'
+	});
+	$(document).on('click','.equStatus>li>a',function(){
+		if(moveKey.length<moveKeyMaxNum){
+			var typeId=$(this).attr('type-id'),typeTitle=$('h3',this).text(),tf=$('#tongjiList').css('transform'),ops={
+				title:$('h3',this).text()+'状态汇总',
+				width:'8em',
+				height:'auto',
+				cssData:{
+					top:'50%',
+					transform:'translate(-50%,-50%)'
+				},
+				callback:function(){
+					/*$.get( '/depart/carrier/query/bydevicetype' , {'carriertypeId': typeId } , function(data){
+						data = typeof(data)==='object' ? data : JSON.parse(data);
+						if (Number(data.type)===0){
+							if(data.data && data.data.carrierStatusList) {
+								var html=[],list=data.data.carrierStatusList;
+								for(var i=0;i<list.length;i++){
+									html.push('<tr class="'+(Number(list[i].status)===2?'gC_yellow_lt':'')+'"><td>'+list[i].cabinetNumber+'</td><td>'+list[i].latticeId+'</td><td>'+(Number(list[i].status)===2?'不在位':'在位')+'</td><td>'+list[i].device_serialnum+'</td></tr>');
+								}
+								if(html.length===0){ html.push('<tr><td colspan="4">暂无数据</td></tr>'); }
+								$('#tongjiList .addContent').html(html.join(''));
+							}
+						}else if(Number(data.type)===4){
+					          window.parent.location.href = "/html/login";
+					    }else{
+							toastFn(data.desc+' ['+data.type+']'); return false;
+						}
+					});*/
+					window.location.href="/html/logic/deviceByType?departId="+GetQueryString("+departId+")+"&carriertypeId="+typeId+"&title="+typeTitle;
+				}
+			};
+			$('#tongjiList')[0].open(ops);
+		}
+	})
+	
+	$('#menu-right').find('li').each(function() {
+		$(this).click(function() {
+			if($(this).index()==0){ $(location).attr('href', '/html/logicbranch/branchController?departId='+GetQueryString("departId")); }
+			if($(this).index()==1){ $(location).attr('href', '/html/logicbranch/complexSearch?departId='+GetQueryString("departId")); }
+			if($(this).index()==2){ $(location).attr('href', '/html/logic/warrant?departId='+GetQueryString("departId")); }
+		})
+	})
+
+	$('.equStatusCont').on('contextmenu', function (e){
+		var zoomNum=$('body').css('zoom'); zoomNum=zoomNum||1;
+		$('#menu-right').css({ display: 'block', left: e.clientX/zoomNum+10, top: e.clientY/zoomNum+10 });
+		return false;
+	});
+
+	$(document).on('click', function(e){ if ($(e.target).closest('.menu-right').length === 0){ $('#menu-right').hide(); } });
+  
+	window.mySwiper =null;window.mySwiperL=null;window.moveKey=[],window.moveKeyMaxNum=5;
+  //nav
+	$('.smallTL').on('click', function(e){ e.preventDefault();mySwiper.swipePrev();})
+	$('.smallTR').on('click', function(e){ e.preventDefault();mySwiper.swipeNext();})
+  //list
+	$('.toL').on('click', function(e){ e.preventDefault();mySwiperL.swipePrev();})
+	$('.toR').on('click', function(e){ e.preventDefault();mySwiperL.swipeNext();})
+	  
+    function timeAjax(){
+        var monitoringUrl = "/monitor/controller/depart/"+GetQueryString("departId")
+        var monitoringType = "get";
+        var monitoringData = "";
+        var monitoringSuc = function(res){
+          /*res = JSON.parse(res);*/;
+          if(res.type==0){
+            var gooutAndExpireCount = res.data.gooutAndExpireCount;
+            var typeStatistics = res.data.typeStatistics;
+            var cabInfos = res.data.cabInfos;
+            var typeStatisticsL = Math.ceil(res.data.typeStatistics.length%5);
+            var cabInfosL = Math.ceil(res.data.cabInfos.length%3);
+            //统计
+            $("#carrierAll b").text(res.data.allCarrierTotalCount);
+            $("#carrierAllOn b").text(res.data.allCarrierInPositionCount);
+            $("#carrierAllOff b").text(res.data.allCarrierOutByApproveCount);
+            $("#goOutSpan b").text(res.data.gooutAndExpireCount);
+            $("#overTimeSpan b").text(res.data.timeoutNotBackCount);
+            $("#carrierAbnormal b").text(res.data.abnormalCarrierCount);
+            //按存储类型
+            var equStatusContHtml="";
+            for(var e in typeStatistics){
+              var el = typeStatistics[e];
+              equStatusContHtml+='<li class="smallContainer swiper-slide" style="height:50px">'+
+                      '<a href="javascript:;" type-id='+el.typeId+'>'+
+                        '<img class="iconBg" style="width: 62px; height: 50px;" src="'+commonPicUrl+el.typeIcon+'" />'+
+                        '<div class="textC">'+
+                          '<h3>'+ el.typeName+'</h3>'+
+                          '<p>在位 <span class="firSpan">'+ el.inPositionCount +'</span>总数 <span>'+ el.totalCount +'</span></p>'+
+                        '</div>'+
+                      '</a>'+
+                    '</li>'
+            }
+            $(".equStatus").html(equStatusContHtml);
+            mySwiper = new Swiper('.equStatusCont',{
+              paginationClickable: true,
+              slidesPerView:5,
+				onTouchMove: function(swiper){
+					moveKey.push(1);
+				}
+            })
+            //按柜子
+            $(".ulC").empty();
+            var ulCHtml = "";
+            $.each(cabInfos,function(index, el) {
+              ulCHtml+='<li class="liC  swiper-slide">'+
+                '<div class="title" cabNumber="'+el.number+'">'+ el.number +'号柜</div>'+
+                '<ol class="olC">';
+              $.each(el.doors,function(ind, e) {
+                var smallHtml = "";
+                if(e.status==0){
+                  var classDoor = "closeDoor toClose";
+                  smallHtml+='<div class="smallTitle"></div>'+
+                              '<div class="smallContent">'
+                  $.each(e.carriers,function(indexS, elS) {
+                    smallHtml+='<span class="diskIconA" style="background:url('+ commonPicUrl+elS.typeIcon +') no-repeat center center;"></span>'
+                  });
+                }else if(e.status==1){
+                  var classDoor = "openDoor1 open"
+                }else if(e.status==2){
+                  var classDoor = "openDoor3 open"
+                }else if(e.status==3){
+                  var classDoor = "openDoor2 open"
+                }
+                var numInd = ind+1<10?"0"+(ind+1):ind+1
+                ulCHtml+='<li class="'+ classDoor +'" cabNumber="'+el.number+'" latId="'+numInd+'">'+
+                    '<a>'+
+                      '<span class="doorNum">'+ numInd +'</span>'+smallHtml+
+                    '</div></a>'
+                  '</li>'
+              });
+              ulCHtml+='</ol></li>'
+            });
+            $(".ulC").html(ulCHtml);
+            mySwiperL = new Swiper('.conList',{
+				paginationClickable: true,
+				slidesPerView: 3,
+				onTouchMove: function(swiper){
+					moveKey.push(1);
+				}
+            })
+            //重置定位
+            resize();
+          }else if(res.type==4){
+            window.parent.location.href = "/html/login"
+          }else{
+            toastFn(res.detail);
+          }
+        }
+        takeAjax(monitoringUrl,monitoringType,monitoringData,monitoringSuc)
+      }
+      timeAjax()
+      //var timer = setInterval(timeAjax,5000)
+
+	$('.ulC').on('click', '.liC li',  function(event) {
+       event.preventDefault();
+       if(moveKey.length<moveKeyMaxNum){
+	       var cabNumber = $(this).attr("cabNumber");
+	       var latId = $(this).attr("latId");
+	       location.href = "/html/logic/carrierDet?departId="+GetQueryString("+departId+")+"&cabNumber="+cabNumber+"&latId="+latId;
+       }
+     });
+     $('.ulC').on('click', '.liC>div',  function(event) {
+		event.preventDefault();
+		if(moveKey.length<moveKeyMaxNum){
+			mySwiperL.isMove=false;
+			var cabNumber = $(this).attr("cabNumber");
+			location.href = "/html/logic/carrierTotal?departId="+GetQueryString("+departId+")+"&cabNumber="+cabNumber;
+		}
+     });
+     $('body').mousedown(function(){ moveKey=[]; });
+
+    $("#goOutSpan").click(function(event) {
+        event.preventDefault();
+        location.href = "/html/logic/goOut?type=out&departId="+GetQueryString("departId");
+      }); 
+      $("#overTimeSpan").click(function(event) {
+        event.preventDefault();
+        location.href = "/html/logic/goOut?type=time&departId="+GetQueryString("departId");
+      });
+      $("#carrierAbnormal").click(function(event) {
+          event.preventDefault();
+          location.href = "/html/logic/carrierAbnormal?type=time&departId="+GetQueryString("departId");
+        });
+  })
+  setInterval(currentTimes,1000);
+  </script>
+</body>
+</html>

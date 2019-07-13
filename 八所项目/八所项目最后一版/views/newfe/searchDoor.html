@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>开关门查询</title>
+  <!-- 作者 -->
+  <meta name="author" content="yKoala">
+  <!-- 网页描述 -->
+  <meta name="description" content="系统设置--部门处室">
+  <!-- 关键字使用","分隔 -->
+  <meta name="keywords" content="部门处室">
+  <!-- 禁止浏览器从本地机的缓存中调阅页面内容 -->
+  <meta http-equiv="Pragma" content="no-cache">
+  <!-- 用来防止别人在框架里调用你的页面 -->
+  <meta http-equiv="Window-target" content="_top">
+  <!-- content的参数有all，none，index，noindex，follow，nofollow，默认是all -->
+  <meta name="robots" content="none">
+  <!-- 网页不会被缓存 -->
+  <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+  <!-- 解决部分兼容性问题，如果安装了GCF，则使用GCF来渲染页面，如果未安装GCF，则使用最高版本的IE内核进行渲染。 -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <!-- 页面按原比例显示 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/resource/css/branch.css">
+  <link rel="stylesheet" href="/resource/css/datetime.css">
+  <style type="text/css">
+  select{font-size: 16px;}
+  </style>
+</head>
+<body>
+  <div class="branch styleBox1">
+    <div class="add" style="text-align: left; height: auto;">
+    	<div>
+        	<div class="selectD fromList">
+				<label for="">柜体号：</label>
+				<div class="selectBox">
+					<p class="selectP posText"></p>
+					<span class="selectDown"></span>
+					<ul class="selectDownContent pos"></ul>
+					<input type="hidden" value="" id="guihao" />
+				</div>
+			</div>
+        	<div class="fromList">
+				<label for="">柜门号：</label>
+				<div class="selectBox">
+					<p class="selectP posText"></p>
+					<span class="selectDown"></span>
+					<ul class="selectDownContent pos"></ul>
+					<input type="hidden" value="" id="guimen" />
+				</div>
+			</div>
+		</div>
+		<div>
+			<div class="fromList">时间段： <input type="text" id="start" class="addInput"></div>
+			<div class="fromList">　至　　  <input type="text" id="end" class="addInput"></div>
+			<button class="toAdd" id="search-btn">查询</button>
+		</div>
+    </div>
+    <table class="tableBox">
+      <thead>
+        <tr>
+          <th style="padding: 0;width: auto;">序号</th>
+          <th>柜门号</th>
+          <th>使用人</th>
+          <th>操作方式</th>
+          <th>时间</th>
+        </tr>
+      </thead>
+      <tbody class="addContent">
+      </tbody>
+    </table>
+    <div id="IDlaypage"></div>
+  </div>
+  <div class="errorBox"></div>
+  <div id="shadow"></div>
+  <script src="/resource/js/jquery.min.js"></script>
+  <script src="/resource/js/common.js"></script>
+  <script src="/resource/js/datetime.js"></script>
+  <script src="/resource/js/laypage.js"></script>
+  <script>
+  function fillGuimen(n) {
+    var guimenList = ['<li lId="0">请选择</li>'],n=n?n:0;
+    for(var i=1; i<n+1; i++) {
+		guimenList.push('<li lId="'+ i +'">'+ i +'</li>');
+    }
+    $('#guimen').siblings('ul').html(guimenList.join(''));
+    $('#guimen').val(0).trigger('changes');
+  }
+
+  function loadGuihaoList(n) {
+    $.getJSON('/depart/cabinet/query?cabinetId=0', function(data) {
+		if (Number(data.type)===0){
+			if (!data.data) return;
+			var guihaoList = [];
+			var guimen = n ? n : 0;
+			data.data.cabinetStatisticList.forEach((c, i) => {
+				guihaoList.push('<li lId="'+c.cabinet_id+'" child-num="'+c.lattice_count+'">'+c.number+'</li>');
+			});
+			$('#guihao').val(guimen).siblings('ul').html(guihaoList.join(''));
+			$('#guihao').trigger('changes');
+		}else if(Number(data.type)===4){
+			window.parent.location.href = "/html/login";
+		}else{
+			toastFn(data.desc+' ['+data.type+']'); return false;
+		}
+    });
+  }
+
+  $(function(){
+    onLoadTimeChoiceDemo();
+    borainTimeChoice({
+        start:"#start",
+        end:"#end",
+        level:"HM",
+        less:false
+    });
+
+    //动态改变字体大小
+	$("body").css("fontSize",$("#body", parent.document).css("fontSize"));
+	window.onresize = function(){
+		$("body").css("fontSize",$("#body", parent.document).css("fontSize"));
+	}
+	//select模拟绑定
+	selectFunc();
+	$('#guihao').on('changes', function(e){
+		fillGuimen(Number($('[lId='+$(this).val()+']',$(this).siblings('ul')).attr('child-num')));
+	});
+	loadGuihaoList();
+
+	$('#search-btn').on('click', function() {
+		var guihao = $('#guihao').val();
+		var guimen = $('#guimen').val();
+		var start = $('#start').val();
+		var end = $('#end').val();
+		
+		if(guihao==0){ toastFn('请填选柜体号');return; }
+		
+		$.post('/search/device/log', {
+			cabId: guihao,
+			latId: guimen,
+			startTime: start?(start + ':00'):start,
+			endTime: end?(end + ':00'):end,
+			devicetypeId:0
+		}, function(data) {
+			data = typeof(data)==='object' ? data : JSON.parse(data);
+			if (Number(data.type)===0){
+				if (data.data && data.data.result) {
+					dataRender({
+			       		laypageId:'IDlaypage',
+			       		listMain:$(".addContent"),
+			       		data:data.data.result, //数据
+			       		itemHtml:function(i,d){
+							return '<tr>'+
+							'<td style="padding:0;width:auto;">'+(i+1)+'</td>'+
+							'<td style="padding:0;width:auto;">'+d.lattice_number+'</td>'+
+							'<td style="padding:0;width:auto;">'+d.who+'</td>'+
+							'<td style="padding:0;width:auto;">'+d.action+'</td>'+
+							'<td style="padding:0;width:auto;">'+d.action_time+'</td>'+
+							'</tr>';
+			       		}
+					});
+				}
+			}else if (Number(data.type)===0){
+				window.parent.location.href = "/html/login";
+			}else{
+				toastFn(data.desc+' ['+data.type+']'); return false;
+			}
+		})
+	})
+  });
+  </script>
+</body>
+</html>

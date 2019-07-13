@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>保密柜存放位置</title>
+  <!-- 作者 -->
+  <meta name="author" content="yKoala">
+  <!-- 网页描述 -->
+  <meta name="description" content="系统设置--保密柜存放位置">
+  <!-- 关键字使用","分隔 -->
+  <meta name="keywords" content="保密柜存放位置">
+  <!-- 禁止浏览器从本地机的缓存中调阅页面内容 -->
+  <meta http-equiv="Pragma" content="no-cache">
+  <!-- 用来防止别人在框架里调用你的页面 -->
+  <meta http-equiv="Window-target" content="_top">
+  <!-- content的参数有all，none，index，noindex，follow，nofollow，默认是all -->
+  <meta name="robots" content="none">
+  <!-- 网页不会被缓存 -->
+  <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+  <!-- 解决部分兼容性问题，如果安装了GCF，则使用GCF来渲染页面，如果未安装GCF，则使用最高版本的IE内核进行渲染。 -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <!-- 页面按原比例显示 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/resource/css/branch.css">
+</head>
+<body>
+  <div class="branch savePosition">
+    <div class="add">
+      存放位置：
+      <input type="text" class="addInput" id="saveP">
+      <button class="toAdd toSave">保存</button>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          <th>存放位置</th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody class="addContent">
+        <tr>
+          <td>1</td>
+          <td class="safetyGrade">文件保管间</td>
+          <td class="redact">
+            <button>编辑</button>
+          </td>
+          <td class="delate">
+            <button>删除</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="sureEdit">
+      <div class="sTitle">编辑保密柜存放位置信息<span class="toClose">X</span></div>
+      <div class="editBody">
+        <div>存放位置：<input type="text" id="id_cabinet_location" hidden=""><input type="text" id="name_cabinet_location"><button id="editsure">确认</button><button id="cancleEdit">取消</button></div>
+      </div>
+    </div>
+  </div>
+  <div class="errorBox"></div>
+  <div id="shadow"></div>
+  <script src="/resource/js/jquery.min.js"></script>
+  <script src="/resource/js/common.js"></script>
+  <script>
+  $(function(){
+    //动态改变字体大小
+      $("body").css("fontSize",$("#body", parent.document).css("fontSize"));
+      window.onresize = function(){
+        $("body").css("fontSize",$("#body", parent.document).css("fontSize"));
+      }
+    //页面初始化数据请求
+    var savePQuerryUrl = "/system/cabinetlocation/query";
+    var savePQuerryType = "get";
+    var savePQuerryData = {locationId:0};
+    var savePQuerrySuc = function(res){
+      /*res = JSON.parse(res);*/;
+      if(res.type==0){
+        var cabinetLocationList = res.data.cabinetLocationList;
+        var tbodyHtml = "";
+        $.each(cabinetLocationList,function(index, el) {
+          tbodyHtml += '<tr locationId='+el.id_cabinet_location+'>'+
+                          '<td>'+ el.id_cabinet_location +'</td>'+
+                          '<td class="safetyGrade">'+ el.name +'</td>'+
+                          '<td class="redact">'+
+                            '<button>编辑</button>'+
+                          '</td>'+
+                          '<td class="delate">'+
+                            '<button>删除</button>'+
+                          '</td>'+
+                        '</tr>'
+        });
+        $(".addContent").html(tbodyHtml);
+      }else if(res.type==4){
+        window.parent.location.href = "/html/login"
+      }else{
+        toastFn(res.detail)
+      }
+    }
+    takeAjax(savePQuerryUrl,savePQuerryType,savePQuerryData,savePQuerrySuc)
+
+    //发送请求
+    $(".toAdd").on('click', function(event) {
+      event.preventDefault();
+      var saveP = $.trim($("#saveP").val());
+      var savePUrl = "/system/cabinetlocation/add";
+      var savePType = "post";
+      if(!saveP){
+        toastFn("请填写安全等级");
+        return;
+      }
+      var savePData = {name:saveP};
+      var savePSuc = function(res){
+        /*res = JSON.parse(res);*/;
+        if(res.type==0){
+          var location = res.data.location;
+          var tbodyHtml = $(".addContent").html();
+          tbodyHtml += '<tr locationId='+location.id_cabinet_location+'>'+
+                          '<td>'+ location.id_cabinet_location +'</td>'+
+                          '<td class="safetyGrade">'+ location.name +'</td>'+
+                          '<td class="redact">'+
+                            '<button>编辑</button>'+
+                          '</td>'+
+                          '<td class="delate">'+
+                            '<button>删除</button>'+
+                          '</td>'+
+                        '</tr>'
+          $(".addContent").html(tbodyHtml);
+          $("#saveP").val("")
+        }else if(res.type==4){
+          window.parent.location.href = "/html/login"
+        }else{
+          toastFn(res.detail)
+        }
+      }
+      takeAjax(savePUrl,savePType,savePData,savePSuc)
+
+    })
+    
+    
+  //打开修改弹层
+    $("tbody").on('click', '.redact button', function(event) {
+	  event.preventDefault();
+      var top=$('body,html').scrollTop()+20;
+	  $("#shadow").fadeIn();
+	  $(".sureEdit").css('top',top+'px').fadeIn();
+	  var id_cabinet_location = $(this).parent("td").parent("tr").attr("locationId");
+	  var safelevelName = $(this).parent("td").parent("tr").find("td").eq(1).text();
+	  $("#id_cabinet_location").val(id_cabinet_location);
+	  $("#name_cabinet_location").val(safelevelName);
+	});
+    
+  //发送修改请求
+    $("#editsure").on('click', function(event) {
+      event.preventDefault();
+      var locationId = $("#id_cabinet_location").val();
+      var name_cabinet_location = $("#name_cabinet_location").val();
+      var savePUrl = "/system/cabinetlocation/update";
+      var savePType = "post";
+      if(!saveP){
+        toastFn("请填写安全等级");
+        return;
+      }
+      var savePData = {locationId:locationId,name:name_cabinet_location};
+      var savePSuc = function(res){
+        /*res = JSON.parse(res);*/;
+        if(res.type==0){
+        	window.location.reload();
+        }else if(res.type==4){
+          window.parent.location.href = "/html/login"
+        }else{
+          toastFn(res.detail)
+        }
+      }
+      takeAjax(savePUrl,savePType,savePData,savePSuc)
+
+    });
+  
+  
+  //发送删除请求
+    $("tbody").on('click', '.delate button', function(event) {
+      event.preventDefault();
+      var locationId = $(this).parent("td").parent("tr").attr("locationId");
+      var safeUrl = "/system/cabinetlocation/delete";
+      var safeType = "post";
+      var safeData = {locationId:locationId};
+      var safeSuc = function(res){
+        if(res.type==0){
+          window.location.reload();
+        }else if(res.type==4){
+          window.parent.location.href = "/html/login"
+        }else{
+          toastFn(res.detail)
+        }
+      }
+      takeAjax(safeUrl,safeType,safeData,safeSuc)
+    })
+    
+  })
+</script>
+</body>
+</html>

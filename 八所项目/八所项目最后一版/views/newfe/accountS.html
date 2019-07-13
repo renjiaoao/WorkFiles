@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>账号安全</title>
+  <!-- 作者 -->
+  <meta name="author" content="yKoala">
+  <!-- 网页描述 -->
+  <meta name="description" content="系统设置--账号安全">
+  <!-- 关键字使用","分隔 -->
+  <meta name="keywords" content="账号安全">
+  <!-- 禁止浏览器从本地机的缓存中调阅页面内容 -->
+  <meta http-equiv="Pragma" content="no-cache">
+  <!-- 用来防止别人在框架里调用你的页面 -->
+  <meta http-equiv="Window-target" content="_top">
+  <!-- content的参数有all，none，index，noindex，follow，nofollow，默认是all -->
+  <meta name="robots" content="none">
+  <!-- 网页不会被缓存 -->
+  <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+  <!-- 解决部分兼容性问题，如果安装了GCF，则使用GCF来渲染页面，如果未安装GCF，则使用最高版本的IE内核进行渲染。 -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <!-- 页面按原比例显示 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/resource/css/branch.css">
+</head>
+<body>
+  <div class="branchM others">
+    <div class="addM">
+      <div>
+        <label for="mostTime">原有密码：</label>
+        <input type="password" id="oldPassword">
+      </div>
+      <br>
+      <div>
+        <label for="">新密码：</label>
+        <input type="password" id="newPassword">
+      </div>
+      <br>
+      <div>
+        <label for="overTime">确认密码：</label>
+        <input type="password" id="secondPassword">
+      </div>
+      <div class="toRem">
+        <label for=""></label>
+        <div><button class="toAdd toSave">保存</button></div>
+      </div>
+    </div>
+  </div>
+  <div class="errorBox"></div>
+  <script src="/resource/js/jquery.min.js"></script>
+  <script src="/resource/js/common.js"></script>
+  <script>
+  $(function(){
+
+     //动态改变字体大小
+      $("body").css("fontSize",$("#body", parent.document).css("fontSize"));
+      window.onresize = function(){
+        $("body").css("fontSize",$("#body", parent.document).css("fontSize"));
+      }
+      
+      //修改密码
+      $(".toAdd").on('click', function(event) {
+          event.preventDefault();
+          var oldPassword = $.trim($("#oldPassword").val());
+          var newPassword = $.trim($("#newPassword").val());
+          var secondPassword = $.trim($("#secondPassword").val());
+          var branchMData = {rawPassword:oldPassword,newPassword:newPassword};
+          
+          var branchMUrl = "/system/password/update";
+          var branchMType = "post";
+          if(newPassword!=secondPassword){
+            toastFn("请确保两次密码一致！");
+            return;
+          }
+          var branchMSuc = function(res){
+            /*res = JSON.parse(res);*/;
+            if(res.type==0){
+              window.location.reload();
+            }else if(res.type==4){
+              window.parent.location.href = "/html/login"
+            }else{
+              toastFn(res.detail);
+              return;
+            }
+          }
+          takeAjax(branchMUrl,branchMType,branchMData,branchMSuc)
+
+        })
+    
+  })
+  </script>
+</body>
+</html>

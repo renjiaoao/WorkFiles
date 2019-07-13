@@ -1,0 +1,11 @@
+@charset "UTF-8";
+.toBody{height: 3.4em;width: 6.8em;position: absolute;left: 50%;top: 55%;margin-top: -1.7em;margin-left: -3.4em;}
+.toBody>div{height: 2.019em;line-height: 2.019em;width: 100%;font-size: .3em;color:#6789ac;margin-bottom: .4em;text-align: center;}
+.toBody>div>label{width: 4.533em;height: 1.667em;margin-right: .667em;}
+.toBody>.setLogin>label{width: 8em;height: 1.667em;text-align: right;}
+.toBody>div>input{height:  1.667em;width:13.333em;border:1px solid #1063a9;padding-left: .1em;}
+.toBody>div.choose{height: 1em;line-height:1em;margin: 1em 0 0 0;font-size: .24em;color:#6789ac;text-align: left;}
+.toBody>div.choose>label{width: 8.36em;height: .3em;margin-right: .8em;}
+#submitBtn{width: 13.332em;height: 2em;line-height: 2em;background: #008fe9;color:#fff;font-size: 1em;border:1px solid #1063a9;border-radius: .3em;-webkit-border-radius: .3em;-moz-border-radius: .3em;behavior: url("./js/PIE.htc")}
+.chooseSpan{display: inline-block;width: 1em;height: 1em;border:1px solid #1063a9;vertical-align: bottom;margin-right: .1em;cursor: pointer;}
+.toBody>div.choose>span.active{background:transparent url("../images/chooseD.png") no-repeat center;background-size: .8em .7em;}

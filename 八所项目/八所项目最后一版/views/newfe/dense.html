@@ -1,0 +1,700 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>涉密载体</title>
+  <!-- 作者 -->
+  <meta name="author" content="yKoala">
+  <!-- 网页描述 -->
+  <meta name="description" content="系统设置--涉密载体">
+  <!-- 关键字使用","分隔 -->
+  <meta name="keywords" content="涉密载体">
+  <!-- 禁止浏览器从本地机的缓存中调阅页面内容 -->
+  <meta http-equiv="Pragma" content="no-cache">
+  <!-- 用来防止别人在框架里调用你的页面 -->
+  <meta http-equiv="Window-target" content="_top">
+  <!-- content的参数有all，none，index，noindex，follow，nofollow，默认是all -->
+  <meta name="robots" content="none">
+  <!-- 网页不会被缓存 -->
+  <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+  <!-- 解决部分兼容性问题，如果安装了GCF，则使用GCF来渲染页面，如果未安装GCF，则使用最高版本的IE内核进行渲染。 -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <!-- 页面按原比例显示 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/resource/css/branch.css">
+  <style type="text/css">
+  	.selectD{ position: relative; }
+  	.branch table{font-size:80%;}
+  	.branch td:first-of-type, .branch th:first-of-type{width:auto;padding-left:1em ;}
+  	.branch td:nth-of-type(3){width:auto;}
+  </style>
+</head>
+<body>
+  <div class="branch dense">
+    <div class="add denseAdd">
+      <div>
+        <label for="">RFID卡片号：</label>
+        <input type="text" id="num" style="width:14em">
+      </div>
+      <div class="selectD fromRoom">
+        <label for="">所属单位：</label>
+        <div style="width:14em"><p style="width:8em" class="selectP subdepartsText"></p><span class="selectDown"></span></div>
+        <ul class="selectDownContent subdeparts" style="left:11.333em;margin-left:0.3rem;top:2.2em;width: 14.1em;">
+          
+        </ul>
+      </div>
+      <div class="selectD fromRoom">
+        <label for="">类别：</label>
+        <div style="width:14em"><p style="width:8em" class="selectP typesText"></p><span class="selectDown"></span></div>
+        <ul class="selectDownContent types" style="left:11.333em;margin-left:0.5rem;top:2.2em;width:14em;">
+          
+        </ul>
+      </div>
+      <div class="toGui">
+        <div class="selectD">
+          <label for="">放到：</label>
+          <div><p class="selectP cabinetsText"></p><span class="selectDown"></span></div> 柜　
+          <ul class="selectDownContent cabinets" data-type="d1" style="left:11.333em;margin-left:0.3rem;top:2.2em;">
+          </ul>
+        </div>
+        <div class="selectD">
+          <div><p class="selectP doorsText"></p><span class="selectDown"></span></div> 门　
+          <ul class="selectDownContent doors" data-type="d2" style="left: 0rem;top:2.2em;">
+            
+          </ul>
+        </div>
+        <div class="selectD">
+          <div style="width:5em;padding:0;" ><p style="float:left;width:3em" class="selectP posIndexText"></p><span class="selectDown"></span></div> 号位置
+          <ul class="selectDownContent posIndex" data-type="d3" style="left: 0rem;top:2.2em;">
+            
+          </ul>
+        </div>
+      </div>
+      <div class="selectD safeDj">
+        <label for="">安全等级：</label>
+        <div style="width:14em" ><p style="width:8em" class="selectP safeLevelsText"></p><span class="selectDown"></span></div>
+        <ul class="selectDownContent safeLevels" style="left:11.333em;margin-left:0.5rem;top:2.2em;width:14em;">
+        </ul>
+      </div>
+      <div>
+        <label for="">载体编号：</label>
+        <input type="text" id="model" style="width:14em">
+      </div>
+      <div>
+        <label for="">品牌型号：</label>
+        <input type="text" id="brand" style="width:14em">
+      </div>
+      <div>
+        <label for="">配置：</label>
+        <input type="text" id="configuration" style="width:14em">
+      </div>
+      <div>
+        <label for="">是否共享：</label>
+      	<div class="checkStyle"><span id="isShareAdd" style="vertical-align: middle;"></span></div>
+      </div>
+      <div>
+        <label for="">备注：</label>
+        <input type="text" id="memo" style="width:14em">
+        <button class="toAdd" style="">增加</button>
+      </div>
+      <div style="border: solid 1px #0189e0;margin-top:1rem;">
+        <label for="">载体编号：</label>
+        <input type="text" id="pearson-name" style="width:14em;">
+        <button style="margin-top:0.56em;" class="toSearch">查询</button>
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>序号</th>
+          <th>RFID卡片号</th>
+          <th>类别</th>
+          <th>所属单位</th>
+          <th>位置</th>
+          <th>安全等级</th>
+          <th>品牌型号</th>
+          <th>载体编号</th>
+          <th>编辑</th>
+          <th>删除</th>
+        </tr>
+      </thead>
+      <tbody class="addContent"></tbody>
+    </table>
+    <div id="IDlaypage"></div>
+    <div class="sureEdit sureC" style="height:10em;width:10em">
+      <div class="sTitle">编辑涉密载体信息<span class="toClose">X</span></div>
+      
+      
+      <div class="add denseAdd" >
+      <div>
+        <label for="">RFID卡片号：</label>
+        <input type="text" id="numModify" style="width:14em" >
+        <input type="hidden" id="carrier_idModify">
+        <input type="hidden" id="dept_idModify">
+      </div>
+      <div class="selectD fromRoom">
+        <label for="">所属部门：</label>
+        <div style="width:14em" ><p  style="width:8em" class="selectP subdepartsTextModify"  lid=""></p><span class="selectDown"></span></div>
+        <ul class="selectDownContent subdeparts" style="left:7.66em;margin-left:0.5rem;top:2.2em;width:14em;">
+          
+        </ul>
+      </div>
+      <div class="selectD fromRoom">
+        <label for="">类别：</label>
+        <div style="width:14em" ><p style="width:8em"  class="selectP typesTextModify"  lid=""></p><span class="selectDown"></span></div>
+        <ul class="selectDownContent types" style="left:7.66em;margin-left:0.5rem;top:2.2em;width:14em;">
+          
+        </ul>
+      </div>
+      <div class="toGui">
+        <div class="selectD">
+          <label for="">放到：</label>
+          <div><p class="selectP cabinetsTextModify"  lid=""></p><span class="selectDown"></span></div>　柜　
+          <ul class="selectDownContent cabinets" data-type="d1" style="left:7.66em;margin-left:0.3rem;top:2.2em;">
+          </ul>
+        </div>
+        <div class="selectD">
+          <div><p class="selectP doorsTextModify"  lid=""></p><span class="selectDown"></span></div>　门　
+          <ul class="selectDownContent doors" data-type="d2" style="left: 0rem;top:2.2em;">
+            
+          </ul>
+        </div>
+        <div class="selectD">
+          <div style="width:5em;padding:0;" ><p style="float:left;width:3em" class="selectP posIndexTextModify"  lid=""></p><span class="selectDown"></span></div>　号位置
+          <ul class="selectDownContent posIndex" data-type="d3" style="left: 0rem;top:2.2em;">
+            
+          </ul>
+        </div>
+      </div>
+      <div class="selectD safeDj">
+        <label for="">安全等级：</label>
+        <div style="width:14em" ><p style="width:8em"  class="selectP safeLevelsTextModify"  lid=""></p><span class="selectDown"></span></div>
+        <ul class="selectDownContent safeLevels" style="left:7.66em;margin-left:0.5rem;top:2.2em;width:14em;">
+        </ul>
+      </div>
+      <div>
+        <label for="">载体编号：</label>
+        <input type="text" id="modelModify" style="width:14em" >
+      </div>
+      <div>
+        <label for="">品牌型号：</label>
+        <input type="text" id="brandModify" style="width:14em" >
+      </div>
+      <div>
+        <label for="">配置：</label>
+        <input type="text" id="configurationModify" style="width:14em" >
+      </div>
+      <div>
+        <label for="">是否共享：</label>
+      	<div class="checkStyle"><span id="isShareEdit" style="vertical-align: middle;"></span></div>
+      </div>
+      <div>
+        <label for="">备注：</label>
+        <input type="text" id="memoModify" style="width:14em" >
+      </div>
+      <div class="toSaveC"><button class="toSaveCSubmit">修改</button></div>
+    </div>
+      
+      
+      
+    </div>
+  </div>
+  <div class="errorBox"></div>
+  <div id="shadow"></div>
+  <script src="/resource/js/jquery.min.js"></script>
+  <script src="/resource/js/common.js"></script>
+  <script src="/resource/js/laypage.js"></script>
+  <script>
+  var selectDataList={};
+  $(function(){
+    //动态改变字体大小
+      $("body").css("fontSize",$("#body", parent.document).css("fontSize"));
+      window.onresize = function(){
+        $("body").css("fontSize",$("#body", parent.document).css("fontSize"));
+      }
+    //单选框
+    $(".checkStyle").on('click', 'span', function(event) {
+      $(this).toggleClass('active');
+    });
+    //发送获取初始数据
+    var cabinetInfoListTmp , latticeListTmp , selectLoadEnd=false;
+    function addFunc(url,jsonData){
+      var cabinetQuerryUrl = url , cabinetQuerryType = "get" , cabinetQuerryData = jsonData;
+      var cabinetQuerrySuc = function(res){
+        if(res.type==0){
+			if(!selectDataList.subDept){
+				var subDepartmentListMatch = res.data.subDepartmentList ? res.data.subDepartmentList : [] ;
+				selectDataList.subDept={};
+				for (var i=0; i < subDepartmentListMatch.length; i++) {
+					selectDataList.subDept[subDepartmentListMatch[i].id_sub_department]=subDepartmentListMatch[i].name;
+				}
+			}
+			if(!selectDataList.carriertype){
+				var carrierTypeListMatch = res.data.carrierTypeList ? res.data.carrierTypeList : [];
+				selectDataList.carriertype={};
+				for (var i=0;i<carrierTypeListMatch.length;i++){
+					selectDataList.carriertype[carrierTypeListMatch[i].carriertype_id]=carrierTypeListMatch[i].typename;
+				}
+			}
+			if(!selectDataList.doorNum){
+				var cabinetInfoListMatch = res.data.cabinetInfoList ? res.data.cabinetInfoList : [];
+				selectDataList.doorNum={};
+				for (var i=0;i<cabinetInfoListMatch.length;i++){
+					var _ca = cabinetInfoListMatch[i];
+					selectDataList.doorNum[_ca.id]={'name':_ca.name,'data':{}};
+					for (var m=0;m<_ca.latticeList.length;m++){
+						var _la=_ca.latticeList[m];
+						selectDataList.doorNum[_ca.id]['data'][_la.id]={'name':_la.name,'data':{}};
+						for (var n=0;n<_la.rfidInfoList.length;n++){
+							var _rf=_la.rfidInfoList[n];
+							selectDataList.doorNum[_ca.id]['data'][_la.id]['data'][_rf.id]={'name':_rf.name};
+						}
+					}
+				}
+			}
+			if(!selectDataList.carrierData){
+				var carrierDetailListMatch = res.data.carrierDetailList ? res.data.carrierDetailList : [];
+				selectDataList.carrierData={};
+				for (var i=0; i < carrierDetailListMatch.length; i++) {
+					selectDataList.carrierData[carrierDetailListMatch[i].carrier_id]=carrierDetailListMatch[i];
+				}
+			}
+			if(!selectDataList.safelevelData){
+				var carrierSafelevelListMatch = res.data.carrierSafelevelList ? res.data.carrierSafelevelList : [];
+				selectDataList.safelevelData={};
+				for (var i=0;i<carrierSafelevelListMatch.length;i++) {
+					selectDataList.safelevelData[carrierSafelevelListMatch[i].safelevelId]=carrierSafelevelListMatch[i].safelevelname;
+				}
+			}
+        	dataRender({
+        		laypageId:'IDlaypage',
+        		listMain:$(".addContent"),
+        		data:res.data.carrierList, //数据
+        		itemHtml:function(index,el){
+        			//原代码开始
+					var sub_dept_id = el.sub_dept_id , classify=el.classify||2 , subdepartName2=selectDataList.subDept[sub_dept_id]||'';
+					var carriertype_id = el.carriertype_id , typeName = selectDataList.carriertype[carriertype_id]||"";
+					var cabinetInfoId = el.cabinet_id , lattice_id = el.lattice_id , rfid = el.rfid;
+					var caData=selectDataList.doorNum[cabinetInfoId],cabinetName = caData?caData.name:'';
+					var doData=caData?caData.data[el.lattice_id]:'',doorName = doData?doData.name:'';
+					var poData=doData?doData.data[el.rfid]:'',posName = poData ? poData.name : '';
+					var modelName = el.device_serialnum , carrier_id = el.carrier_id , carrierIdData=selectDataList.carrierData[carrier_id],
+					brandName = carrierIdData?carrierIdData.brandmodel:'', 
+					configName = carrierIdData?carrierIdData.configuration:'', 
+					memoName = carrierIdData?carrierIdData.memo:'';
+
+					var safelevelId = el.safelevel_id , safeLevelName = selectDataList.safelevelData[safelevelId]||'';
+   		
+					return '<tr carrier_id="'+el.carrier_id+'" carrier_serialnum="'+el.carrier_serialnum
+					+'" dept_id="'+el.dept_id+'" sub_dept_name="'+subdepartName2+'" sub_dept_id="'+el.sub_dept_id
+					+'" typeName="'+typeName+'" carriertype_id="'+el.carriertype_id+'" cabinet_id="'+el.cabinet_id
+					+'" cabinetName="'+cabinetName+'" lattice_id="'+el.lattice_id+'" doorName="'+doorName
+					+'" posName="'+posName+'" rfid="'+rfid+'" safelevel_id="'+el.safelevel_id+'" safeLevelName="'+safeLevelName
+					+'" brandName="'+brandName+'" configName="'+configName+'" modelName="'
+					+modelName+'" memoName="'+memoName+'" classify="'+classify+'"  >'
+					+'<td>'+(index+1)+'</td>'
+					+'<td>'+el.carrier_serialnum+'</td>'
+					+'<td>'+typeName+'</td>'
+					+'<td>'+subdepartName2+'</td>'
+					+'<td>'+cabinetName+'-'+doorName+'-'+posName+'</td>'
+					+'<td>'+safeLevelName+'</td>'
+					+'<td>'+brandName+'</td>'
+					+'<td>'+modelName+'</td>'
+					+'<td class="redact"><button>编辑</button></td>'
+					+'<td class="delete"><button>删除</button></td>'
+					+'</tr>';
+					//原代码结束
+				}
+        	});
+			//下拉列表数据加载
+			(!selectLoadEnd)&&selectDataLoadFn(res);
+		}else if(res.type==4){
+			window.parent.location.href = "/html/login"
+		}else{
+			toastFn(res.detail);
+			return;
+		}
+      }
+      takeAjax(cabinetQuerryUrl,cabinetQuerryType,cabinetQuerryData,cabinetQuerrySuc);
+    }
+    addFunc("/depart/carrier/query/bycarrierid",{carrierId:0,deviceSerialNum:0});
+    //模糊查询
+    $('.toSearch').click(function(){
+    	var val=$.trim($('#pearson-name').val())||0; //载体编号
+    	addFunc("/depart/carrier/query/bydeviceserialnum",{carrierId:0,deviceSerialNum:val});
+    })
+    
+	//下拉列表数据加载
+	function selectDataLoadFn(res){
+    	selectLoadEnd=true;
+		cabinetInfoListTmp = res.data.cabinetInfoList ? res.data.cabinetInfoList : [] ;
+		//subdepart
+		var subdepartsHtml = "";
+		$.each(res.data.subDepartmentList?res.data.subDepartmentList:[],function(index, el) {
+			subdepartsHtml += '<li lId="'+ el.id_sub_department +'" parentDepartId="'+ el.parentDepartId +'">'+ el.name +'</li>'
+		});
+		$(".subdeparts").html(subdepartsHtml);
+		
+		//type
+		var typeHtml = "";
+		$.each(res.data.carrierTypeList?res.data.carrierTypeList:[],function(index, el) {
+			typeHtml += '<li lId="'+ el.carriertype_id +'">'+ el.typename +'</li>'
+		});
+		$(".types").html(typeHtml);
+		
+		
+		//cabinetInfoList
+		var cabinetsHtml = "";
+		$.each(res.data.cabinetInfoList?res.data.cabinetInfoList:[],function(index, el) {
+			cabinetsHtml += '<li lId="'+ el.id +'">'+ el.name +'</li>'
+		});
+		$(".cabinets").html(cabinetsHtml);
+		
+		//carrierSafelevelList
+		var safeLevlesHtml = "";
+		$.each(res.data.carrierSafelevelList?res.data.carrierSafelevelList:[],function(index, el) {
+			safeLevlesHtml += '<li lId="'+ el.safelevelId +'">'+ el.safelevelname +'</li>'
+		});
+		$(".safeLevels").html(safeLevlesHtml);
+	}
+    //下拉列表收起
+    $('body').click(function(){
+    	$(".selectDownContent:visible").fadeOut();
+    })
+    //下拉列表选择展开
+    $(".selectDown").on('click', function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      $(".selectDownContent").fadeOut();
+      $(this).parent("div").siblings(".selectDownContent").fadeIn();
+    });
+    //下拉列表选择
+	$(".selectDownContent").on('click', 'li', function(event) {
+      event.preventDefault();
+      /* Act on the event */
+      
+      var _cabinetId = ($(this).attr('lid')) ;
+      var _type = $(event.target).parent('.selectDownContent').data('type');
+      if (_type == 'd1') {
+    	 for(var i=0;i<cabinetInfoListTmp.length;i++){
+    		 if(_cabinetId==cabinetInfoListTmp[i].id){
+    			 latticeListTmp = cabinetInfoListTmp[i].latticeList ;
+    			 var doorsHtml = "";
+    	          $.each(cabinetInfoListTmp[i].latticeList,function(index, door) {
+    	        	  doorsHtml += '<li lId="'+ door.id +'">'+ door.name +'</li>'
+    	          });
+    	          $(".doors").html(doorsHtml);
+    		 }
+    	 }
+      } else if (_type == 'd2') {
+    	  for(var i=0;i<latticeListTmp.length;i++){
+     		 if(_cabinetId==latticeListTmp[i].id){
+     			 var posIndexs = "";
+     	          $.each(latticeListTmp[i].rfidInfoList,function(index, pos) {
+     	        	 posIndexs += '<li lId="'+ pos.id +'">'+ pos.name +'</li>'
+     	          });
+     	          $(".posIndex").html(posIndexs);
+     		 }
+     	 }
+      } else if (_type == 'd3') {
+    	  //nothing todo
+      }
+      
+      var lId = $(this).attr("lId");
+      var liText = $(this).text()
+      $(this).parent("ul").siblings('div').find("p").attr("lId",lId).text(liText)
+      $(".selectDownContent").fadeOut();
+    });
+    
+    
+    
+    //发送增加请求
+    
+    $(".toAdd").on('click', function(event) {
+      event.preventDefault();
+      var cabinetUrl = "/depart/carrier/add";
+      var dept_id = 0;
+      var carrier_serialnum = $.trim($('#num').val());
+      
+      
+      var sub_dept_id = $.trim($(".subdepartsText:eq(0)").attr("lId"));
+      var carriertype_id = $.trim($(".typesText:eq(0)").attr("lId"));
+      var cabinet_id = $.trim($(".cabinetsText:eq(0)").attr("lId"));
+      var lattice_id = $.trim($(".doorsText:eq(0)").attr("lId"));
+      var rfid = $.trim($(".posIndexText:eq(0)").attr("lId"));
+      var safelevel_id = $.trim($(".safeLevelsText:eq(0)").attr("lId"));
+      
+      var brandmodel = $.trim($('#brand').val());
+      var device_serialnum = $.trim($('#model').val());
+      var configuration = $.trim($('#configuration').val());
+      var memo = $.trim($('#memo').val());
+	  var classify = $("#isShareAdd").hasClass("active") ? 2 : 1;  //共享
+
+      	if(!carrier_serialnum){
+          toastFn("RFID卡片号不能为空");
+          return;
+        }
+        if(!sub_dept_id){
+          toastFn("请选择所属部门");
+          return;
+        }
+        if(!carriertype_id){
+          toastFn("请选择所属类别");
+          return;
+        }
+        
+        if(!cabinet_id){
+          toastFn("请选择所属柜");
+          return;
+        }
+        
+        if(!lattice_id){
+            toastFn("请选择所属门");
+            return;
+          }
+        if(!rfid){
+            toastFn("请选择所属位置");
+            return;
+          }
+        if(!safelevel_id){
+            toastFn("请选择安全级别");
+            return;
+          }
+        if(!model){
+            toastFn("载体编号不能为空");
+            return;
+          }
+        if(!brandmodel){
+            toastFn("品牌型号不能为空");
+            return;
+          }
+        if(!configuration){
+            toastFn("配置不能为空");
+            return;
+          }
+		  /*
+        if(!memo){
+            toastFn("备注不能为空");
+            return;
+          }*/
+        
+      var cabinetType = "post";
+      var cabinetData = {
+    		  carrier_serialnum:carrier_serialnum,
+    		  device_serialnum:device_serialnum,
+    		  dept_id:dept_id,
+    		  sub_dept_id:sub_dept_id,
+    		  cabinet_id:cabinet_id,
+    		  lattice_id:lattice_id,
+    		  rfid:rfid,
+    		  classify:classify,
+    		  carriertype_id:carriertype_id,
+    		  safelevel_id:safelevel_id,
+    		  brandmodel:brandmodel,
+    		  configuration:configuration,
+    		  memo:memo
+   		};
+            
+      var branchSuc = function(res){
+        /*res = JSON.parse(res);*/;
+        if(res.type==0){
+          window.location.reload();
+        }else if(res.type==4){
+          window.parent.location.href = "/html/login"
+        }else{
+          toastFn(res.detail);
+          return;
+        }
+      }
+      
+      takeAjax(cabinetUrl,cabinetType,cabinetData,branchSuc)
+    })
+    
+    //编辑
+    $("tbody").on('click', '.redact button', function(event) {
+      event.preventDefault();
+      var top=$('body,html').scrollTop()+20;
+      $(".sureEdit").css('top',top+'px').add("#shadow").fadeIn();
+      var tr=$(this).closest("tr");
+      var carrier_id = tr.attr("carrier_id");
+      var carrier_serialnum = tr.attr("carrier_serialnum");
+      var dept_id = tr.attr("dept_id");
+      var sub_dept_name = tr.attr("sub_dept_name");
+      var sub_dept_id = tr.attr("sub_dept_id");
+      var typename = tr.attr("typename");
+      var carriertype_id = tr.attr("carriertype_id");
+      var cabinet_id = tr.attr("cabinet_id");
+      var cabinetname = tr.attr("cabinetname");
+      var lattice_id = tr.attr("lattice_id");
+      var doorname = tr.attr("doorname");
+      var posname = tr.attr("posname");
+      var rfid = tr.attr("rfid");
+      var safelevel_id = tr.attr("safelevel_id");
+      var safelevelname = tr.attr("safelevelname");
+      var brandname = tr.attr("brandname");
+      var configname = tr.attr("configname");
+      var device_serialnum = tr.attr("modelname");
+      var memoname = tr.attr("memoname");
+      var classify= tr.attr("classify");
+      
+      $("#dept_idModify").val(dept_id);
+      $("#carrier_idModify").val(carrier_id);
+      $("#numModify").val(carrier_serialnum);
+      $("#dept_idModifyModify").val(dept_id);
+      $(".subdepartsTextModify").text(sub_dept_name).attr('lid',sub_dept_id);
+      
+      $(".typesTextModify").text(typename).attr('lid',carriertype_id);
+      
+      $('ul [lid="'+cabinet_id+'"]',$(".cabinetsTextModify").closest('.selectD')).click();
+      
+      $('ul [lid="'+lattice_id+'"]',$(".doorsTextModify").closest('.selectD')).click();
+      
+      $(".posIndexTextModify").text(posname).attr('lid',rfid);
+      
+      $(".safeLevelsTextModify").text(safelevelname).attr('lid',safelevel_id);      
+      
+      $("#brandModify").val(brandname);
+      
+      $("#modelModify").val(device_serialnum);
+      
+      $("#configurationModify").val(configname);
+      $("#memoModify").val(memoname);
+      if(Number(classify) === 2){
+		$("#isShareEdit").addClass("active"); //是否共享
+      }else{
+    	$("#isShareEdit").removeClass("active");
+      }
+      
+    });
+
+    $(".toSaveCSubmit").on('click',function(event) {
+        event.preventDefault();
+        var cabinetUrl = "/depart/carrier/update";
+       
+        var carrier_serialnum = $.trim($('#numModify').val());
+        var sub_dept_id = $.trim($(".subdepartsTextModify:eq(0)").attr("lid"));
+        var carriertype_id = $.trim($(".typesTextModify:eq(0)").attr("lId"));
+        var cabinet_id = $.trim($(".cabinetsTextModify:eq(0)").attr("lId"));
+        var lattice_id = $.trim($(".doorsTextModify:eq(0)").attr("lId"));
+        var rfid = $.trim($(".posIndexTextModify:eq(0)").attr("lId"));
+        var safelevel_id = $.trim($(".safeLevelsTextModify:eq(0)").attr("lId"));        
+        var brandmodel = $.trim($('#brandModify').val());
+        var device_serialnum = $.trim($('#modelModify').val());
+        var configuration = $.trim($('#configurationModify').val());
+        var memo = $.trim($('#memoModify').val());
+        var classify = $("#isShareEdit").hasClass("active") ? 2 : 1;  //共享
+
+        if(!carrier_serialnum){
+            toastFn("RFID卡片号不能为空");
+            return;
+          }
+          if(!sub_dept_id){
+            toastFn("请选择所属部门");
+            return;
+          }
+          if(!carriertype_id){
+            toastFn("请选择所属类别");
+            return;
+          }
+          
+          if(!cabinet_id){
+            toastFn("请选择所属柜");
+            return;
+          }
+          
+          if(!lattice_id){
+              toastFn("请选择所属门");
+              return;
+            }
+          if(!rfid){
+              toastFn("请选择所属位置");
+              return;
+            }
+          if(!safelevel_id){
+              toastFn("请选择安全级别");
+              return;
+            }
+          if(!device_serialnum){
+              toastFn("载体编号不能为空");
+              return;
+            }
+          if(!brandmodel){
+              toastFn("品牌型号不能为空");
+              return;
+            }
+          if(!configuration){
+              toastFn("配置不能为空");
+              return;
+            }
+			/*          if(!memo){
+              toastFn("备注不能为空");
+              return;
+            }
+        */
+      
+
+	        var carrierId = $.trim($('#carrier_idModify').val());
+	        var dept_id = $.trim($('#dept_idModify').val());
+	        var cabinetType = "post";
+	        var cabinetData ={carrierId:carrierId,carrier_serialnum:carrier_serialnum,device_serialnum:device_serialnum,dept_id:dept_id,sub_dept_id:sub_dept_id,cabinet_id:cabinet_id,lattice_id:lattice_id,rfid:rfid,classify:classify,carriertype_id:carriertype_id,safelevel_id:safelevel_id,brandmodel:brandmodel,configuration:configuration,memo:memo};
+        
+	        var branchSuc = function(res) {
+		          //res = JSON.parse(res);          
+		          if(res.type==0){
+		            window.location.reload();
+		          }else if(res.type==4){
+		            window.parent.location.href = "/html/login"
+		          }else{
+		            toastFn(res.detail);
+		            return;
+		          }
+	        }
+	        takeAjax(cabinetUrl,cabinetType,cabinetData,branchSuc)
+	});    
+    
+    //取消
+    $(".cancleEdit").click(function(event) {
+      /* Act on the event */
+       $(".toClose").click()
+    });
+    
+	$(".toClose").on('click', function(event) {    	
+		event.preventDefault();
+		$(".sureEdit").fadeOut();
+		$("#shadow").fadeOut();
+	});
+
+    //确认修改
+    $(".editsure").on('click',function(event) {
+      event.preventDefault();      
+    });
+
+    //删除
+    $("table").on('click', '.delete button', function(event) {
+        event.preventDefault();
+        /* Act on the event */
+        var deleteUrl = "/depart/carrier/delete";
+        var carrierId = $(this).parent("td").parent("tr").attr("carrier_id");
+        var number = $(this).parent("td").parent("tr").attr("carrier_serialnum");
+        if(!confirm("确认删除编号为:<"+number+">的载体")){
+      		return ;
+      	}
+        var deleteData = {carrierId:carrierId};
+        var deleteType="post";
+        var deleteSuc = function(res){
+          if(res.type==0){
+            window.location.reload();
+          }else if(res.type==4){
+            window.parent.location.href = "/html/login"
+          }else{
+            toastFn(res.detail);
+            return;
+          }
+        }
+        takeAjax(deleteUrl,deleteType,deleteData,deleteSuc)
+      });
+    
+  })
+  </script>
+</body>
+</html>

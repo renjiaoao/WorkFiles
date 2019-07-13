@@ -1,0 +1,17 @@
+@charset "UTF-8";
+a:hover{text-decoration: none;}
+.listContainer{position: relative;width: 100%;height: 100%;overflow: auto;}
+.status{position: absolute;left: 0px;top:0;width:369px;height: 878px;background: transparent url("../images/airplane.png") no-repeat center;background-size: 369px 878px;padding:380px 60px 0 60px;border-radius: 4px;-webkit-border-radius: 4px;-moz-border-radius: 4px;behavior: url("../js/PIE.htc")}
+.status>li{height: 40px;line-height: 40px;margin-bottom: 60px;font-size: 30px;color:#fff;}
+.status>li>span{padding-left:10px;display: inline-block;vertical-align: bottom;margin-bottom: 1px;width: 104px;height: 34px;line-height: 34px;background:#ffffff;margin-left: 16px;border-radius: 4px;-webkit-border-radius: 4px;-moz-border-radius: 4px;behavior: url("../js/PIE.htc")}
+.darkBlue{color:#477ea7;}
+.blue{color:#00a0f2;}
+.orange{color:#f89200;}
+.red{color:#ea3404;}
+.list{position: absolute;top:0;left:374px;border-radius: 4px;-webkit-border-radius: 4px;-moz-border-radius: 4px;behavior: url("../js/PIE.htc")}
+.list>li{display: inline-block;margin: 0 5px 10px 5px;width: 270px;height: 283px;overflow: hidden;border-radius: 4px;-webkit-border-radius: 4px;-moz-border-radius: 4px;behavior: url("../js/PIE.htc")}
+.list>li>a{display:block;width: 100%;height: 100%; }
+.branchName{background: #0094e9;height: 70px;line-height: 70px;width: 100%;color:#fff;color:#fff;text-align:center;font-size:26px;border-radius: 4px 4px 0 0;-webkit-border-radius: 4px 4px 0 0;-moz-border-radius: 4px 4px 0 0;behavior: url("../js/PIE.htc")}
+.list>li>a>ol{background: #fff;width: 100%;height:217px;padding:26px 0 0 55px;font-size: 22px; }
+.list>li>a>ol>li{height: 30px;line-height: 30px;color:#6789ac;margin-bottom:16px;}
+.list>li>a>ol>li>span{display: inline-block;width: 70px;height: 30px;vertical-align: bottom;margin-left: 20px;}

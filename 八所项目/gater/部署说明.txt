@@ -1,0 +1,11 @@
+﻿1 网络和数据库的配置，在config/gate.json目录下，服务器配置为gateServer, 柜子配置为cabClient, mongodb为mongoClient。
+
+2 启动进程 ./start.sh
+  停止进程 ./stop.sh
+  查看状态 ./status.sh
+
+3 启动前需要确定jdk的安装目录，修改start.sh的JAVABIN目录就可以了。
+
+4 以上脚本适用于Linux系统，如果是Windows系统组要自行修改。
+
+5 如果代码有修改，需要用ant编译（eclipse自带）build.xml导出jar包。

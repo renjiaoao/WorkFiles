@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>超时未回</title>
+	 <!-- 编码格式 -->
+  <meta charset="UTF-8">
+  <title></title>
+  <!-- 作者 -->
+  <meta name="author" content="yKoala">
+  <!-- 网页描述 -->
+  <meta name="description" content="系统设置--超时未回">
+  <!-- 关键字使用","分隔 -->
+  <meta name="keywords" content="超时未回">
+  <!-- 禁止浏览器从本地机的缓存中调阅页面内容 -->
+  <meta http-equiv="Pragma" content="no-cache">
+  <!-- 用来防止别人在框架里调用你的页面 -->
+  <meta http-equiv="Window-target" content="_top">
+  <!-- content的参数有all，none，index，noindex，follow，nofollow，默认是all -->
+  <meta name="robots" content="none">
+  <!-- 网页不会被缓存 -->
+  <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+  <!-- 解决部分兼容性问题，如果安装了GCF，则使用GCF来渲染页面，如果未安装GCF，则使用最高版本的IE内核进行渲染。 -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <!-- 页面按原比例显示 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!--[if lt IE 9]>
+     <script src="/resource/js/html5shiv.min.js"></script>
+     <script src="/resource/js/respond.min.js"></script>
+     <script src="/resource/js/pie.js"></script>
+  <![endif]-->
+  <link rel="stylesheet" href="/resource/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/resource/css/reset.css">
+</head>
+<body>
+  <div id="container">
+    <div id="content">
+      <div id="header">
+        <i></i>
+        <a href="/html/logic/monitoringImg"></a>
+        <strong></strong>
+      </div>
+      <div id="contentBody">
+        <div class="contentContainerBody">
+          <div class="title"></div>
+          <div class="toBody" id="goOut">
+            <table>
+              <thead>
+                <tr>
+                  <th>序号</th>
+                  <th>所属单位</th>
+                  <th>使用人</th>
+                  <th>载体类型</th>
+                  <th>品牌型号</th>
+                  <th>载体编号</th>
+                  <th>是否在位</th>
+                  <th>授权时间</th>
+                  <th>预计归还时间</th>
+                  <th>逾期时长（单位：天）</th>
+                </tr>
+              </thead>
+              <tbody id="addContent">
+                <!-- <tr>
+                  <td>笔记本</td>
+                  <td>01</td>
+                  <td>01</td>
+                  <td>01</td>
+                  <td>张三</td>
+                  <td>12：00：00</td>
+                </tr> -->
+              </tbody>
+            </table>
+			<div id="IDlaypage" style="padding: .3em 0 .8em;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="footer">
+      <div class="footerContent">
+        <strong>© 2010-2018</strong>
+        空军研究院保密委员会监制
+        <b></b>
+        <span id="currentTimes"></span>
+      </div>
+    </div>
+  </div>
+  <div class="errorBox"></div>
+  <script src="/resource/js/jquery.min.js"></script>
+  <script src="/resource/js/laypage.js"></script>
+	<script src="/resource/js/common.js"></script>
+  <script>
+    $(function(){
+    	headerLink();
+       HtmlFontsize()
+      window.onresize = function(){
+        HtmlFontsize()
+      }
+       var branchQuerryUrl = "/monitor/carrier/list/normal/"+GetQueryString("departId");
+       var typename = GetQueryString("type");
+       if(typename=="out"){
+    	   $(".title").html("正常外出　　统计汇总");
+       }else{
+    	   branchQuerryUrl = "/monitor/carrier/list/expire/"+GetQueryString("departId");
+    	   $(".title").html("外出逾期　　统计汇总");
+       }
+    	   
+   	    //发送获取初始数据
+   	    var branchQuerryType = "get";
+   	    var branchQuerryData = "";
+   	    var branchQuerrySuc = function(res){
+   	      /*res = JSON.parse(res);*/
+   	      if(res.type==0){
+			dataRender({
+				laypageId:'IDlaypage',
+	       		listMain:$("#addContent"),
+	       		data:res.data.carrierStatuses, //数据
+	       		itemHtml:function(index, el){
+					var statusName = "", day=Number(el.expireTime)/24;
+					day=(!day)?'':day<1?'<1':parseInt(day); 	        	
+					return '<tr latticeId="'+ el.latticeId +'">'+
+  	          				'<td>'+ (index+1) +'</td>'+
+  	                        '<td>'+ el.userFrom +'</td>'+
+  	                        '<td>'+ el.userName +'</td>'+
+  	                        '<td>'+ el.carrierTypeName +'</td>'+
+  	                        '<td>'+ el.carrierBrandModel +'</td>'+
+  	                        '<td>'+ el.device_serialnum+'</td>'+
+  	                        '<td>'+ statusText(0,el.status) +'</td>'+
+  	                        '<td>'+ el.approvetime +'</td>'+
+  	                        '<td>'+ el.planbacktime +'</td>'+
+  	                        '<td>'+ day +'</td>'+
+  	                      '</tr>';
+				}
+			});
+   	      }else if(res.type==4){
+   	        window.parent.location.href = "/html/login"
+   	      }else{
+   	        toastFn(res.detail);
+   	        return;
+   	      }
+   	    }
+   	    takeAjax(branchQuerryUrl,branchQuerryType,branchQuerryData,branchQuerrySuc);
+   	  })
+   	  
+   	  setInterval(currentTimes,1000);
+  </script>
+</body>
+</html>

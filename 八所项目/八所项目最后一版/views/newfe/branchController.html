@@ -1,0 +1,109 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>系统设置</title>
+   <!-- 编码格式 -->
+  <meta charset="UTF-8">
+  <!-- 作者 -->
+  <meta name="author" content="yKoala">
+  <!-- 网页描述 -->
+  <meta name="description" content="系统设置">
+  <!-- 关键字使用","分隔 -->
+  <meta name="keywords" content="系统设置">
+  <!-- 禁止浏览器从本地机的缓存中调阅页面内容 -->
+  <meta http-equiv="Pragma" content="no-cache">
+  <!-- 用来防止别人在框架里调用你的页面 -->
+  <meta http-equiv="Window-target" content="_top">
+  <!-- content的参数有all，none，index，noindex，follow，nofollow，默认是all -->
+  <meta name="robots" content="none">
+  <!-- 网页不会被缓存 -->
+  <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+  <!-- 解决部分兼容性问题，如果安装了GCF，则使用GCF来渲染页面，如果未安装GCF，则使用最高版本的IE内核进行渲染。 -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <!-- 页面按原比例显示 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!--[if lt IE 9]>
+     <script src="/resource/js/html5shiv.min.js"></script>
+     <script src="/resource/js/respond.min.js"></script>
+     <script src="/resource/js/pie.js"></script>
+  <![endif]-->
+  <link rel="stylesheet" href="/resource/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/resource/css/reset.css">
+  <link rel="stylesheet" href="/resource/css/controller.css">
+</head>
+<body id="body">
+  <div id="container">
+    <div id="content">
+      <div id="header">
+        <i></i>
+        <a href="/html/logic/monitoringImg"></a>
+        <strong></strong>
+      </div>
+      <div id="contentBody">
+        <div class="contentContainerBody">
+          <div class="title">系统设置</div>
+          <div class="toBody">
+            <div id="nav">
+              <ul class="tabContainer" id="li-list">
+                
+              </ul>
+            </div>
+            <div id="main">
+                <iframe src="" id="mainFrame" name="mainFrame" scrolling="auto" frameborder="0" width="100%" style="margin-top: 0"></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="footer">
+      <div class="footerContent">
+        <strong>© 2010-2018</strong>
+        空军研究院保密委员会监制
+        <i></i>
+        <span id="currentTimes"></span>
+      </div>
+    </div>
+  </div>
+  <script src="/resource/js/jquery.min.js"></script>
+  <script src="/resource/js/common.js"></script>
+  <script>
+
+    $(function(){
+    	headerLink();
+       var departId  =GetQueryString("departId");
+       var lists = [];
+       $([
+           	{url: '/html/logicbranch/room?departId='+departId, name: '部门处室'},
+           	{url: '/html/logicbranch/cabinet?departId='+departId, name: '保密柜'},
+           	{url: '/html/logicbranch/dense?departId='+departId, name: '涉密载体'},
+           	{url: '/html/logicbranch/whoUse?departId='+departId, name: '使用人'},
+           	{url: '/html/logicbranch/accountS?departId='+departId, name: '账号安全'},
+       ]).each(function(i, em) {
+    	   lists.push('<li><a href="'+em.url+'" target="mainFrame" class="' +(i==0?'active': '')+ '">' +em.name+ '</a></li>');
+       });
+    	   
+    	   
+   		$('#li-list').html(lists.join(''));
+   		$("#mainFrame").attr("src","/html/logicbranch/room?departId="+departId+"");
+    	
+    	
+      HtmlFontsize()
+      window.onresize = function(){
+        HtmlFontsize()
+      }
+      $(".tabContainer>li").on('click', 'a', function(event) {
+        $(this).addClass('active').parent("li").siblings('li').find("a").removeClass('active')
+      });
+     
+      
+      
+      
+    })
+    
+    setInterval(currentTimes,1000);
+    
+  </script>
+</body>
+</html>

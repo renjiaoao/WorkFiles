@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>设置系统管理员</title>
+	 <!-- 编码格式 -->
+  <meta charset="UTF-8">
+  <title></title>
+  <!-- 作者 -->
+  <meta name="author" content="yKoala">
+  <!-- 网页描述 -->
+  <meta name="description" content="系统设置--设置系统管理员">
+  <!-- 关键字使用","分隔 -->
+  <meta name="keywords" content="设置系统管理员">
+  <!-- 禁止浏览器从本地机的缓存中调阅页面内容 -->
+  <meta http-equiv="Pragma" content="no-cache">
+  <!-- 用来防止别人在框架里调用你的页面 -->
+  <meta http-equiv="Window-target" content="_top">
+  <!-- content的参数有all，none，index，noindex，follow，nofollow，默认是all -->
+  <meta name="robots" content="none">
+  <!-- 网页不会被缓存 -->
+  <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+  <!-- 解决部分兼容性问题，如果安装了GCF，则使用GCF来渲染页面，如果未安装GCF，则使用最高版本的IE内核进行渲染。 -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <!-- 页面按原比例显示 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!--[if lt IE 9]>
+     <script src="/resource/js/html5shiv.min.js"></script>
+     <script src="/resource/js/respond.min.js"></script>
+     <script src="/resource/js/pie.js"></script>
+  <![endif]-->
+  <script src="/resource/js/jquery.min.js"></script>
+  <script src="/resource/js/common.js"></script>
+  <link rel="stylesheet" href="/resource/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/resource./css/reset.css">
+  <link rel="stylesheet" href="/resource/css/login.css">
+</head>
+<body>
+  <div id="container">
+    <div id="content">
+      <div id="header">
+        <i></i>
+        <a href="/html/logic/monitoringImg"></a>
+        <strong></strong>
+      </div>
+      <div id="contentBody">
+        <div class="contentContainerBody">
+          <div class="title">设置系统管理员</div>
+          <div class="toBody">
+            <div class="setLogin">
+              <label for="username">系统管理员口令：</label>
+              <input type="password" id="keywoed">
+            </div>
+            <div class="setLogin">
+              <label for="keyword">再次确认口令：</label>
+              <input type="password" id="surekeyword">
+            </div>
+            <div class="setLogin">
+              <label></label>
+              <button id="submitBtn">登录</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="footer">
+      <div class="footerContent">
+        <strong>© 2010-2018</strong>
+        空军研究院保密委员会监制
+        <b></b>
+        <span id="currentTimes"></span>
+      </div>
+    </div>
+  </div>
+  <div class="errorBox"></div>
+  <script>
+    $(function(){
+    	headerLink();
+      HtmlFontsize()
+      window.onresize = function(){
+        HtmlFontsize()
+      }
+      $('.chooseSpan').on('click', function(event) {
+        event.preventDefault();
+        $(this).toggleClass("active")
+      });
+      //发送请求
+      $("#submitBtn").on('click', function(event) {
+        event.preventDefault();
+        var newPassword = $.trim($("#keyword").val());
+        var password = $.trim($("#surekeyword").val());
+        if(newPassword.length>20||newPassword.length<6){
+          toastFn("密码长度为6-20个字符,请重新输入！");
+          return;
+        }
+        if(password!=newPassword){
+          toastFn("两次口令输入不一致，请检查！");
+          return;
+        }
+        var setLoginUrl = "/system/password/setting";
+        var setLoginType = "post";
+        var setLoginData = {newPassword:newPassword};
+        var setLoginSuc = function(res){
+          /*res = JSON.parse(res);*/;
+          if(res.type==0){
+              location.href = "/html/login"
+          }else if(res.type==4){
+            window.parent.location.href = "/html/login"
+          }else{
+            toastFn(res.detail)
+          }
+        }
+        takeAjax(setLoginUrl,setLoginType,setLoginData,setLoginSuc)
+      });
+    })
+    
+    setInterval(currentTimes,1000);
+  </script>
+</body>
+</html>

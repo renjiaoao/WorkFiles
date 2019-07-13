@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>审计员</title>
+  <!-- 作者 -->
+  <meta name="author" content="yKoala">
+  <!-- 网页描述 -->
+  <meta name="description" content="系统设置--审计员">
+  <!-- 关键字使用","分隔 -->
+  <meta name="keywords" content="审计员">
+  <!-- 禁止浏览器从本地机的缓存中调阅页面内容 -->
+  <meta http-equiv="Pragma" content="no-cache">
+  <!-- 用来防止别人在框架里调用你的页面 -->
+  <meta http-equiv="Window-target" content="_top">
+  <!-- content的参数有all，none，index，noindex，follow，nofollow，默认是all -->
+  <meta name="robots" content="none">
+  <!-- 网页不会被缓存 -->
+  <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+  <!-- 解决部分兼容性问题，如果安装了GCF，则使用GCF来渲染页面，如果未安装GCF，则使用最高版本的IE内核进行渲染。 -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <!-- 页面按原比例显示 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/resource/css/branch.css">
+  <style>
+  .addM{height:11em;}
+  .comptoller {width: 11.60em;}
+  .addM > div{width: 26em;text-align: left;}
+  .comptoller .toAdd { margin:-0.15em -5em 0 0; display: inline-block;vertical-align: middle; }
+  </style>
+</head>
+<body>
+  <div class="branchM comptoller">
+    <div class="addM">
+      <div>
+        <label for="userName">用户名：</label>
+        <input type="text" id="userName">
+      </div>
+      <br>
+      <div>
+        <label for="">输入口令：</label>
+        <input type="text" id="keyword">
+      </div>
+      <br>
+      <div>
+        <label for="">确认口令：</label>
+        <input type="text" id="surekeyword">
+      </div>
+      <br>
+      <div id="selectD" class="selectD">
+        <label for="">所属部门：</label>
+        <div><p id="selectP" class="selectP"></p><span id="selectDown" class="selectDown"></span></div>
+        <ul id="selectDownContent" class="selectDownContent">
+        </ul>
+        <button class="toAdd">增加</button>
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>用户名</th>
+          <th>口令</th>
+          <th>所属部门</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody class="addContent">
+        
+      </tbody>
+    </table>
+    <div class="sureEdit">
+      <div class="sTitle">编辑审计员信息<span class="toClose">X</span></div>
+      <div class="addM">
+        <div>
+          <label for="">用户名：</label>
+          <input type="text" id="modify_username"><input id="modify_managerId" type="hidden">
+        </div>
+        <br>
+        <div>
+          <label for="">输入口令：</label>
+          <input type="text" id="modify_password">
+        </div>
+        <br>
+        <div>
+          <label for="">确认口令：</label>
+          <input type="text" id="modify_confirm_password">
+        </div>
+        <br>
+        <div id="modify_selectD" class="selectD">
+          <label for="">所属部门：</label>
+          <div><p id="modify_selectP" class="modify_selectP" deptid="" deptName=""></p><span id="modify_selectDown" class="modify_selectDown"></span></div>
+          <ul id="modify_selectDownContent" class="selectDownContent">
+          </ul>
+        </div>
+        <br>
+        <div class="toRem">
+          <label for=""></label>
+          <div><button id="editsure">确认</button><button id="cancleEdit">取消</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+ 
+  
+  <div class="errorBox"></div>
+  <div id="shadow"></div>
+  <script src="/resource/js/jquery.min.js"></script>
+  <script src="/resource/js/common.js"></script>
+  <script>
+  $(function(){
+    //动态改变字体大小
+      $("body").css("fontSize",$("#body", parent.document).css("fontSize"));
+      window.onresize = function(){
+        $("body").css("fontSize",$("#body", parent.document).css("fontSize"));
+      }
+    $("thead").on('click', 'span', function(event) {
+      $(this).toggleClass('active');
+      var ifActive = $(this).attr("class");
+      if(ifActive == "active"){
+        $("tbody span.ad").addClass('active')
+      }else{
+        $("tbody span.ad").removeClass('active')
+      }
+    });
+    
+  
+    
+    $("tbody").on('click', 'span.ad', function(event) {
+      $(this).toggleClass('active');
+    });
+
+    $('body').click(function(){ $(".selectDownContent:visible").fadeOut(); });
+    $(".selectDown").on('click', function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      $(".selectDownContent").fadeIn();
+    });
+    $(".selectDownContent").on('click', 'li', function(event) {
+      event.preventDefault();
+      $(".selectDownContent").fadeOut();
+      $(".selectP",$(this).closest('.selectD')).text($(this).text()).attr("deptId",$(this).attr("deptId"))
+    });
+    
+    $("#modify_selectDown").on('click', function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        $("#modify_selectDownContent").fadeIn();
+      });
+    $("#modify_selectDownContent").on('click', 'li', function(event) {
+        event.preventDefault();
+        $("#modify_selectDownContent").fadeOut();
+        $("#modify_selectP").text($(this).text()).attr("deptId",$(this).attr("deptId"))
+      });
+
+    //发送页面初始化数据请求
+    var superMQuerryData = {};
+    var departNameObj;
+    
+    var superMQuerryUrl = "/system/list/auditor";
+    var superMQuerryType = "get";
+    var superMQuerrySuc = function(res){
+      /*res = JSON.parse(res);*/;
+      if(res.type==0){
+        departNameObj = {};
+        var managerList = res.data.managerList
+        var departmentList = res.data.departmentList
+        var tbodyHtml = "";
+        var ulHtml = "";
+        var modifyUlHtml = "" ;
+        $.each(departmentList,function(index, el) {
+          departNameObj[el.deptid]=el.name;
+          ulHtml += '<li deptid="'+ el.deptid +'">'+ el.name +'</li>'
+        });
+        $("#selectDownContent").html(ulHtml);
+        
+        $.each(departmentList,function(index, el) {
+            departNameObj[el.deptid]=el.name;
+            modifyUlHtml += '<li deptid="'+ el.deptid +'">'+ el.name +'</li>'
+          });
+          $("#modify_selectDownContent").html(modifyUlHtml);
+        
+        $.each(managerList,function(index, el) {
+        	 var deptId = el.deptid ;
+             var deptName = "" ;
+        	for (var i=0;i<departmentList.length;i++){
+        		if(departmentList[i].deptid==deptId){
+        			deptName = departmentList[i].name ;
+        		}
+        	}
+          tbodyHtml += '<tr deptName="'+deptName+'" id_manager="'+el.id_manager+'" username="'+el.username+'" password="'+el.password+'" deptid="'+ el.deptid +'">'+
+                          '<td>'+ el.username +'</td>'+
+                          '<td>'+ el.password +'</td>'+
+                          '<td>'+ deptName +'</td>'+
+                          '<td class="redact"><button>编辑</button></td>'+
+                        '</tr>'
+        });
+        $(".addContent").html(tbodyHtml);
+      }else if(res.type==4){
+        window.parent.location.href = "/html/login"
+      }else{
+        toastFn(res.detail);
+        return;
+      }
+    }
+    
+  	//打开修改弹层
+    $("tbody").on('click', '.redact button', function(event) {
+	  event.preventDefault();
+      var top=$('body,html').scrollTop()+20;
+	  $("#shadow").fadeIn();
+	  $(".sureEdit").css('top',top+'px').fadeIn();
+	  var id_manager = $(this).parent("td").parent("tr").attr("id_manager");
+	  var username = $(this).parent("td").parent("tr").attr("username");
+	  var password = $(this).parent("td").parent("tr").attr("password");
+	  var deptid = $(this).parent("td").parent("tr").attr("deptid");
+	  var deptName = $(this).parent("td").parent("tr").attr("deptName");
+	  //$(".editBody").attr({"departId":departId,"departName":departName})
+	  $("#modify_username").val(username);
+	  $("#modify_password").val(password);
+	  $("#modify_confirm_password").val(password);
+	  $("#modify_managerId").val(id_manager) ; 
+	  $("#modify_selectP").attr('deptid',deptid) ;
+	  $("#modify_selectP").text(deptName) ;
+	});
+    
+  	
+  //修改逻辑
+    $("#editsure").on('click', function(event) {
+    	var managerId = $("#modify_managerId").val();
+        var username = $.trim($("#modify_username").val());
+        var password = $("#modify_password").val();
+        var confirmPwd = $("#modify_confirm_password").val();
+        var deptid = $("#modify_selectP").attr('deptid');
+        var type = 4;
+        var branchUrl = "/system/manager/update";
+        var branchType = "post";
+        var branchData = {managerId:managerId,username:username,deptId:deptid,password:password,type:type};
+        if(confirmPwd!=password){
+          toastFn("两次密码不一致");
+          return;
+        }
+        var branchSuc = function(res){
+          //res = JSON.parse(res);
+          if(res.type==0){
+            $(".sureEdit").fadeOut();
+            $("#shadow").fadeOut();
+            window.location.reload();
+           // $("#addInput").val("")
+          }else if(res.type==4){
+            window.parent.location.href = "/html/login"
+          }else{
+            toastFn(res.detail);
+            return;
+          }
+        }
+        takeAjax(branchUrl,branchType,branchData,branchSuc)
+  	  });
+  	
+    takeAjax(superMQuerryUrl,superMQuerryType,superMQuerryData,superMQuerrySuc)
+    //发送增加请求
+    //发送请求
+    $(".toAdd").on('click', function(event) {
+      event.preventDefault();
+      var username = $.trim($("#userName").val());
+      var password = $.trim($("#keyword").val());
+      var surepassword = $.trim($("#surekeyword").val());
+      var type = 4;
+      var deptId = $("#selectP").attr("deptid");
+      var deptIdText = $("#selectP").text();
+      var isToShowAC = $(".selectA").attr("class")
+      var isToShowMC = $(".selectB").attr("class")
+      var superMData = {username:username,password:password,type:type,deptId:deptId};
+      if(isToShowAC=="active"){
+        superMData.isShowAC = 1;
+      }
+      if(isToShowMC=="active"){
+        superMData.isShowMC = 1;
+      }
+      
+      var superMUrl = "/system/manager/add";
+      var superMType = "post";
+      if(!username){
+        toastFn("部门名称长度为1-10个字符");
+        return;
+      }
+      if(password!=surepassword){
+        toastFn("请确保两次口令一致！");
+        return;
+      }
+      if(!deptIdText){
+        toastFn("请选择所属部门");
+        return;
+      }
+      var superMSuc = function(res){
+        /*res = JSON.parse(res);*/;
+        if(res.type==0){
+          var newManager = res.data.manager
+          var tbodyHtml = $(".addContent").html();
+          tbodyHtml += '<tr deptid="'+ newManager.deptid +'">'+
+                          '<td>'+ newManager.username +'</td>'+
+                          '<td>'+ newManager.password +'</td>'+
+                          '<td>'+ departNameObj[newManager.deptid] +'</td>'+
+                          '<td class="redact"><button>编辑</button></td>'+
+                        '</tr>'
+          $(".addContent").html(tbodyHtml);
+          $(".addM input").val("")
+           $("#selectP").text("").removeAttr('deptid');
+          $(".addM .selectP").val("")
+        }else if(res.type==4){
+          window.parent.location.href = "/html/login"
+        }else{
+          toastFn(res.detail);
+          return;
+        }
+      }
+      takeAjax(superMUrl,superMType,superMData,superMSuc)
+
+    })
+  })
+  </script>
+</body>
+</html>

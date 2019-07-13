@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>部门</title>
+  <!-- 作者 -->
+  <meta name="author" content="yKoala">
+  <!-- 网页描述 -->
+  <meta name="description" content="系统设置--部门">
+  <!-- 关键字使用","分隔 -->
+  <meta name="keywords" content="部门">
+  <!-- 禁止浏览器从本地机的缓存中调阅页面内容 -->
+  <meta http-equiv="Pragma" content="no-cache">
+  <!-- 用来防止别人在框架里调用你的页面 -->
+  <meta http-equiv="Window-target" content="_top">
+  <!-- content的参数有all，none，index，noindex，follow，nofollow，默认是all -->
+  <meta name="robots" content="none">
+  <!-- 网页不会被缓存 -->
+  <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+  <!-- 解决部分兼容性问题，如果安装了GCF，则使用GCF来渲染页面，如果未安装GCF，则使用最高版本的IE内核进行渲染。 -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <!-- 页面按原比例显示 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/resource/css/branch.css">
+</head>
+<body>
+  <div class="branch">
+    <div class="add">
+      部门名称：
+      <input type="text" id="addInput" class="addInput">
+      <button class="toAdd">增加</button>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>部门名称</th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody class="addContent">
+        <tr deptid="">
+          <td class="branchType">编辑</td>
+          <td class="redact">
+            <button>编辑</button>
+          </td>
+          <td class="delate">
+            <button>删除</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+    <div class="sureEdit">
+      <div class="sTitle">编辑部门信息<span class="toClose">X</span></div>
+      <div class="editBody">
+        <div>部门名称：<input type="text" id="roomName"><input type="text" id="roomId" hidden=""><button id="editsure">确认</button><button id="cancleEdit">取消</button></div>
+      </div>
+    </div>
+  <div class="errorBox"></div>
+  <div id="shadow"></div>
+  <script src="/resource/js/jquery.min.js"></script>
+  <script src="/resource/js/common.js"></script>
+  <script>
+  $(function(){
+    //动态改变字体大小
+      $("body").css("fontSize",$("#body", parent.document).css("fontSize"));
+      window.onresize = function(){
+        $("body").css("fontSize",$("#body", parent.document).css("fontSize"));
+      }
+    //发送获取初始数据
+    var branchQuerryUrl = "/system/department/query";
+    var branchQuerryType = "get";
+    var branchQuerryData = {departId:0};
+    var branchQuerrySuc = function(res){
+      /*res = JSON.parse(res);*/
+      if(res.type==0){
+        $(".addContent").empty()
+        var tbodyQuerryHtml = "";
+        $.each(res.data.departmentList,function(index, el) {
+          tbodyQuerryHtml += '<tr deptid="'+ el.deptid +'">'+
+                        '<td class="branchType">'+ el.name +'</td>'+
+                        '<td class="redact">'+
+                          '<button>编辑</button>'+
+                        '</td>'+
+                        '<td class="delate">'+
+                          '<button>删除</button>'+
+                        '</td>'+
+                      '</tr>'
+        });
+        $(".addContent").html(tbodyQuerryHtml);
+      }else if(res.type==4){
+        window.parent.location.href = "/html/login"
+      }else{
+        toastFn(res.detail);
+        return;
+      }
+    }
+    takeAjax(branchQuerryUrl,branchQuerryType,branchQuerryData,branchQuerrySuc)
+    //发送增加请求
+    $(".toAdd").on('click', function(event) {
+      event.preventDefault();
+      var departName = $.trim($("#addInput").val());
+      var branchUrl = "/system/department/add";
+      var branchType = "post";
+      var branchData = {departName:departName};
+      if(!departName){
+        toastFn("部门名称长度为1-10个字符");
+        return;
+      }
+      var branchSuc = function(res){
+        /*res = JSON.parse(res);*/;
+        if(res.type==0){
+          var tbodyHtml = $(".addContent").html();
+          tbodyHtml += '<tr deptid="'+ res.data.department.deptid +'">'+
+                        '<td class="branchType">'+ res.data.department.name +'</td>'+
+                        '<td class="redact">'+
+                          '<button>编辑</button>'+
+                        '</td>'+
+                        '<td class="delate">'+
+                          '<button>删除</button>'+
+                        '</td>'+
+                      '</tr>'
+          $(".addContent").html(tbodyHtml);
+          $("#addInput").val("")
+        }else if(res.type==4){
+          window.parent.location.href = "/html/login"
+        }else{
+          toastFn(res.detail);
+          return;
+        }
+      }
+      takeAjax(branchUrl,branchType,branchData,branchSuc)
+    })
+  
+    //打开修改弹层
+    $("tbody").on('click', '.redact button', function(event) {
+	  event.preventDefault();
+      var top=$('body,html').scrollTop()+20;
+	  $("#shadow").fadeIn();
+	  $(".sureEdit").css('top',top+'px').fadeIn();
+	  var departId = $(this).parent("td").parent("tr").attr("deptid");
+	  var departName = $(this).parent("td").parent("tr").find("td:first-of-type").text();
+	  $(".editBody").attr({"departId":departId,"departName":departName})
+	  $("#roomName").val(departName);
+	  $("#roomId").val(departId);
+	});
+    //删除逻辑
+  $("tbody").on('click', '.delate button', function(event) {
+
+
+      var deptid = $(this).parent("td").parent("tr").attr("deptid");
+      var branchUrl = "/system/department/delete";
+      var branchType = "post";
+      var branchData = {departId:deptid};
+      var branchSuc = function(res){
+        //res = JSON.parse(res);
+        if(res.type==0){
+          $("tr[deptid='"+deptid+"']").html("");
+          $("#addInput").val("")
+        }else if(res.type==4){
+          window.parent.location.href = "/html/login"
+        }else{
+          toastFn(res.detail);
+          return;
+        }
+      }
+      takeAjax(branchUrl,branchType,branchData,branchSuc)
+	  });
+	  
+  //修改逻辑
+  $("#editsure").on('click', function(event) {
+      var departName = $.trim($("#roomName").val());
+      var deptid = $("#roomId").val();
+      var branchUrl = "/system/department/update";
+      var branchType = "post";
+      var branchData = {departName:departName,departId:deptid};
+      if(!departName){
+        toastFn("部门名称长度为1-10个字符");
+        return;
+      }
+      var branchSuc = function(res){
+        //res = JSON.parse(res);
+        if(res.type==0){
+          $(".sureEdit").fadeOut();
+          $("#shadow").fadeOut();
+          $("tr[deptid='"+deptid+"']").children('td').eq(0).text(res.data.department.name);
+          $("#addInput").val("")
+        }else if(res.type==4){
+          window.parent.location.href = "/html/login"
+        }else{
+          toastFn(res.detail);
+          return;
+        }
+      }
+      takeAjax(branchUrl,branchType,branchData,branchSuc)
+	  });
+  })
+  </script>
+</body>
+</html>

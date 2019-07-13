@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>其他</title>
+  <!-- 作者 -->
+  <meta name="author" content="yKoala">
+  <!-- 网页描述 -->
+  <meta name="description" content="系统设置--其他">
+  <!-- 关键字使用","分隔 -->
+  <meta name="keywords" content="其他">
+  <!-- 禁止浏览器从本地机的缓存中调阅页面内容 -->
+  <meta http-equiv="Pragma" content="no-cache">
+  <!-- 用来防止别人在框架里调用你的页面 -->
+  <meta http-equiv="Window-target" content="_top">
+  <!-- content的参数有all，none，index，noindex，follow，nofollow，默认是all -->
+  <meta name="robots" content="none">
+  <!-- 网页不会被缓存 -->
+  <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+  <!-- 解决部分兼容性问题，如果安装了GCF，则使用GCF来渲染页面，如果未安装GCF，则使用最高版本的IE内核进行渲染。 -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <!-- 页面按原比例显示 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/resource/css/branch.css">
+</head>
+<body>
+  <div class="branchM others">
+    <div class="addM">
+      <div>
+        <label for="mostTime">最大的登录尝试次数：</label>
+        <input type="text" id="mostTime">
+      </div>
+      <br>
+      <div>
+        <label for="">最小的密码长度：</label>
+        <input type="text" id="keywordLength">
+      </div>
+      <br>
+      <div>
+        <label for="overTime">超时未还阈值：</label>
+        <input type="text" id="overTime">
+      </div>
+      <br>
+      <div>
+        <label for="overTime">外出逾期阈值：</label>
+        <input type="text" id="goOut">
+      </div>
+      <br>
+      <div>
+        <label for="client">软件客户：</label>
+        <input type="text" id="client">
+      </div>
+      <br>
+      <div class="toRem">
+        <label for=""></label>
+        <div><button class="toAdd toSave">保存</button></div>
+      </div>
+    </div>
+  </div>
+  <div class="errorBox"></div>
+  <script src="/resource/js/jquery.min.js"></script>
+  <script src="/resource/js/common.js"></script>
+  <script>
+  $(function(){
+    //动态改变字体大小
+      $("body").css("fontSize",$("#body", parent.document).css("fontSize"));
+      window.onresize = function(){
+        $("body").css("fontSize",$("#body", parent.document).css("fontSize"));
+      }
+    var updateOradd;
+    //页面初始化请求
+    var othersQuerryUrl = "/system/argsetting/query";
+    var othersQuerryType = "get";
+    var othersQuerryData = {};
+    var othersQuerrySuc = function(res){
+      /*res = JSON.parse(res);*/;
+      if(res.type==0){
+        var otherSetting = res.data.otherSetting;
+        if(otherSetting){
+          $("#mostTime").val(otherSetting.maxlogintimes)
+          $("#keywordLength").val(otherSetting.minpwrdlength)
+          $("#overTime").val(otherSetting.timeoutthreshold)
+          $("#goOut").val(otherSetting.overduethreshold)
+          $("#client").val(otherSetting.customer)
+          updateOradd = "update";
+        }else{
+          updateOradd = "add";
+        }
+      }else if(res.type==4){
+        window.parent.location.href = "/html/login"
+      }else{
+        toastFn(res.detail)
+      }
+    }
+    takeAjax(othersQuerryUrl,othersQuerryType,othersQuerryData,othersQuerrySuc)
+
+    //发送请求
+    $(".toAdd").on('click', function(event) {
+      event.preventDefault();
+      var mostTime = $.trim($("#mostTime").val());
+      var keywordLength = $.trim($("#keywordLength").val());
+      var overTime = $.trim($("#overTime").val());
+      var goOut = $.trim($("#goOut").val());
+      var client = $.trim($("#client").val());
+      if(updateOradd == "update"){
+        var othersUrl = "/system/argsetting/update";
+      }else{
+        var othersUrl = "/system/argsetting/add";
+      }
+      
+      var othersType = "post";
+      if(!mostTime || parseInt(mostTime)!=mostTime){
+        toastFn("请填写大于0的最大尝试次数");
+        return;
+      }
+      if(!keywordLength || parseInt(keywordLength)!=keywordLength){
+        toastFn("请填写大于0的最小的密码长度！");
+        return;
+      }
+      if(!overTime || parseInt(overTime)!=overTime){
+        toastFn("请填写大于0的超时未还阈值！");
+        return;
+      }
+      if(!goOut || parseInt(goOut)!=goOut){
+        toastFn("请填写大于0的出逾期阈值！");
+        return;
+      }
+      if(!client){
+        toastFn("请填写软件客户内容！");
+        return;
+      }
+      var othersData = {maxLoginTimes:mostTime,minPwrdLength:keywordLength,timeoutThreshold:overTime,overdueThreshold:goOut,customerName:client};
+      var othersSuc = function(res){
+        /*res = JSON.parse(res);*/;
+        if(res.type==0){
+          toastFn("设置成功");
+          window.location.reload();
+          $("input").val("");
+        }else if(res.type==4){
+          window.parent.location.href = "/html/login"
+        }else{
+          toastFn(res.detail)
+        }
+      }
+      takeAjax(othersUrl,othersType,othersData,othersSuc)
+
+    })
+  })
+  </script>
+</body>
+</html>

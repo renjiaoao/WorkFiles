@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>部门处室</title>
+  <!-- 作者 -->
+  <meta name="author" content="yKoala">
+  <!-- 网页描述 -->
+  <meta name="description" content="系统设置--部门处室">
+  <!-- 关键字使用","分隔 -->
+  <meta name="keywords" content="部门处室">
+  <!-- 禁止浏览器从本地机的缓存中调阅页面内容 -->
+  <meta http-equiv="Pragma" content="no-cache">
+  <!-- 用来防止别人在框架里调用你的页面 -->
+  <meta http-equiv="Window-target" content="_top">
+  <!-- content的参数有all，none，index，noindex，follow，nofollow，默认是all -->
+  <meta name="robots" content="none">
+  <!-- 网页不会被缓存 -->
+  <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+  <!-- 解决部分兼容性问题，如果安装了GCF，则使用GCF来渲染页面，如果未安装GCF，则使用最高版本的IE内核进行渲染。 -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <!-- 页面按原比例显示 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/resource/css/branch.css">
+  <link rel="stylesheet" href="/resource/css/datetime.css">
+  <style type="text/css">
+    .zaiti-radio input{ vertical-align: middle; }
+    th{padding:0 0.5em;}
+  </style>
+</head>
+
+<body>
+  <div class="branch styleBox1">
+    <div class="add" style="text-align: left; height: auto;">
+		<!-- <div class="radioLable">
+			<div class="fromList radioStyle"><span value="1" class="active"></span>按载体查询 </div>
+			<div class="fromList radioStyle"><span value="2"></span>按处室人员查询</div>
+			<input type="hidden" name="according" value="1">
+		</div> -->
+    
+		<div>
+        	<div class="fromList">
+				<label for="">使用单位：</label>
+				<div class="selectBox">
+					<p class="selectP posText"></p>
+					<span class="selectDown"></span>
+					<ul class="selectDownContent pos"></ul>
+					<input type="hidden" value="" id="chushiid" />
+				</div>
+			</div>
+        	<div class="fromList">
+				<label for="">使用人：</label>
+				<div class="selectBox">
+					<p class="selectP posText"></p>
+					<span class="selectDown"></span>
+					<ul class="selectDownContent pos"></ul>
+					<input type="hidden" value="" id="yonghuid" />
+				</div>
+			</div>
+		</div>
+		<div>载体编号： <input id="carrierNum" type="text" class="addInput"></div>
+		<div>
+			<div class="fromList"> 时 间 段：&nbsp;&nbsp;<input type="text" id="start" class="addInput"></div>
+			<div class="fromList">　至　　  <input type="text" id="end" class="addInput"></div>
+			<button class="toAdd" id="search-btn">查询</button>
+		</div>
+    </div>
+    <div class="textBox1 mT_d6em">
+    	<span>总使用次数：<b id="lendCount"></b></span>
+    	<span>总逾期次数：<b id="overdueCount"></b></span>
+    	<span>总逾期天数：<b id="overdueDays"></b></span>
+    	<div class="floatRightBox">
+    		<form action="/monitor/auth/out/query/export" method="post" style="display:none;" id="exportExcelForm">
+    			<input name="subDeptId"/>
+    			<input name="userId"/>
+    			<input name="device_serialnum"/>
+    			<input name="startDate"/>
+    			<input name="endDate"/>
+    		</form>
+    		<span class="btnStyle exportExcelBtn">导出excel表格</span>
+    	</div>
+    </div>
+    <table class="tableBox">
+      <thead>
+        <tr>
+          <th style="padding:0.5em;width: auto;">序号</th>
+          <th>使用单位</th>
+          <th>使用人</th>
+          <th>载体类型</th>
+          <th>载体编号</th>
+          <th>使用次数</th>
+          <th>逾期次数</th>
+          <th>逾期天数</th>
+        </tr>
+      </thead>
+      <tbody class="addContent">
+      </tbody>
+    </table>
+    <div id="IDlaypage"></div>
+  </div>
+  <div class="errorBox"></div>
+  <div id="shadow"></div>
+<script src="/resource/js/jquery.min.js"></script>
+<script src="/resource/js/common.js"></script>
+<script src="/resource/js/datetime.js"></script>
+<script src="/resource/js/laypage.js"></script>
+<script>
+$(function () {
+	//动态改变字体大小
+	$("body").css("fontSize", $("#body", parent.document).css("fontSize"));
+	window.onresize = function () {
+		$("body").css("fontSize", $("#body", parent.document).css("fontSize"));
+	}
+	//时间控件
+	onLoadTimeChoiceDemo();
+	borainTimeChoice({
+		start: "#start",
+		end: "#end",
+		level: "HM",
+		less: false
+	});
+  	//获取处室列表
+  	rankFunc();
+  	//select模拟绑定
+  	selectFunc();
+
+	$('#search-btn').on('click', function () {
+		//数据处理
+		var sendData = {
+			device_serialnum : $.trim($('#carrierNum').val())||'', //载体编码
+			subDeptId : $('#chushiid').val()||0, //子部门ID
+			userId : $('#yonghuid').val()||0, //用户ID
+			startDate : $('#start').val()||'', //开始日期
+			endDate : $('#end').val()||'' //结束日期
+		},emptyKey=0,postNum=null,totalLendCount=0,totalOverdueCount=0,totalOverdueDays=0;
+		sendData.startDate&&(sendData.startDate=sendData.startDate+':00');
+		sendData.endDate&&(sendData.endDate=sendData.endDate+':00');
+		//验证至少填一项
+		$.each(sendData,function(n){ if(!sendData[n]||sendData[n]==0){emptyKey++;}; });
+		if(emptyKey===5){ toastFn('请填写至少1条查询条件'); return false;}
+		//提交
+		$.post('/monitor/auth/out/query', sendData, function (data) {
+			data = typeof(data)==='object' ? data : JSON.parse(data);
+			if (Number(data.type)===0){
+				if(data.data && data.data.statResult) {
+					dataRender({
+			       		laypageId:'IDlaypage',
+			       		listMain:$(".addContent"),
+			       		data:data.data.statResult, //数据
+			       		itemHtml:function(i,d){
+						return '<tr>' +
+							'<td style="padding:0;width:auto;">' + (i+1) + '</td>' +
+							'<td style="padding:0;width:auto;">' + d.userFrom + '</td>' +
+							'<td style="padding:0;width:auto;">' + d.userName + '</td>' +
+							'<td style="padding:0;width:auto;">' + d.carrierTypeName + '</td>' +
+							'<td style="padding:0;width:auto;">' + d.deviceNum + '</td>' +
+							'<td style="padding:0;width:auto;">' + d.lendCount + '</td>' +
+							'<td style="padding:0;width:auto;">' + d.overdueCount + '</td>' +
+							'<td style="padding:0;width:auto;">' + d.overdueDays + '</td>' +
+							'</tr>';
+			       		}
+					});
+				}
+			}else if(Number(data.type)===4){
+				window.parent.location.href = "/html/login";
+			}else{
+				toastFn(data.desc+' ['+data.type+']'); return false;
+			}
+			totalLendCount=data.data&&data.data.totalLendCount ? data.data.totalLendCount : 0;
+			totalOverdueCount=data.data&&data.data.totalOverdueCount ? data.data.totalOverdueCount : 0;
+			totalOverdueDays=data.data&&data.data.totalOverdueDays ? data.data.totalOverdueDays : 0;
+			$('#lendCount').text(totalLendCount);
+			$('#overdueCount').text(totalOverdueCount);
+			$('#overdueDays').text(totalOverdueDays);
+		})
+	});
+	//导出excl
+	$('.exportExcelBtn').click(function(){
+		var sendData={
+				device_serialnum : $('#carrierNum').val()||'', //载体编码
+				subDeptId : $('#chushiid').val()||0, //子部门ID
+				userId : $('#yonghuid').val()||0, //用户ID
+				startDate : $('#start').val()||'', //开始日期
+				endDate : $('#end').val()||'' //结束日期
+			},emptyKey=0;
+		sendData.startDate&&(sendData.startDate=sendData.startDate+':00');
+		sendData.endDate&&(sendData.endDate=sendData.endDate+':00');
+		//验证至少填一项
+		$.each(sendData,function(n){ if(!sendData[n]||sendData[n]==0){emptyKey++;}; });
+		if(emptyKey===5){ toastFn('请填写至少1条查询条件'); return false;}
+		$('#exportExcelForm [name="device_serialnum"]').val(sendData.device_serialnum);
+		$('#exportExcelForm [name="subDeptId"]').val(sendData.subDeptId);
+		$('#exportExcelForm [name="userId"]').val(sendData.userId);
+		$('#exportExcelForm [name="startDate"]').val(sendData.startDate);
+		$('#exportExcelForm [name="endDate"]').val(sendData.endDate);
+		//提交
+		$('#exportExcelForm').submit();
+	});
+});
+</script>
+</body>
+
+</html>

@@ -1,0 +1,28 @@
+{
+	"serverId": 19870421,
+	"cabClient": {
+		"servers": [
+			{
+				"addr": "192.168.0.10",
+				"port": 10,
+				"expireTime": 10
+			}
+		]
+	},
+	"webClient": {
+		"servers": [
+			{
+				"addr": "127.0.0.1",
+				"port": 20001,
+				"expireTime": 10
+			}
+		]
+	},
+	"mongoClient": {
+		"host": "47.92.237.89",
+		"port": 19820,
+		"username": "ssbox_user",
+		"password": "1s2s3b4o5x6",
+		"dbname": "ssbox"
+	}
+}

@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>使用人</title>
+  <!-- 作者 -->
+  <meta name="author" content="yKoala">
+  <!-- 网页描述 -->
+  <meta name="description" content="系统设置--使用人">
+  <!-- 关键字使用","分隔 -->
+  <meta name="keywords" content="使用人">
+  <!-- 禁止浏览器从本地机的缓存中调阅页面内容 -->
+  <meta http-equiv="Pragma" content="no-cache">
+  <!-- 用来防止别人在框架里调用你的页面 -->
+  <meta http-equiv="Window-target" content="_top">
+  <!-- content的参数有all，none，index，noindex，follow，nofollow，默认是all -->
+  <meta name="robots" content="none">
+  <!-- 网页不会被缓存 -->
+  <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+  <!-- 解决部分兼容性问题，如果安装了GCF，则使用GCF来渲染页面，如果未安装GCF，则使用最高版本的IE内核进行渲染。 -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <!-- 页面按原比例显示 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/resource/css/branch.css">
+  <style>
+  .whouse table td:first-of-type, .whouse table th:first-of-type{padding:0 0.5em;width:auto;}
+  .whouse table td, .whouse table th{width:30%;}
+  </style>
+</head>
+<body>
+  <div class="branch whouse">
+    <div class="add">
+      <div>
+        <label for="">UKEY编号：</label>
+        <input type="text" id="user_key_serialnum">
+      </div>
+      <div>
+        <label for="">名称：</label>
+        <input type="text" id="name">
+      </div>
+      <div class="selectD fromRoom">
+        <label for="">所属处室：</label>
+        <div><p class="selectP" id="subName"></p><span class="selectDown"></span></div>
+        <div class="lingdao"><span id="ld1"></span>处室领导</div>
+        <ul class="selectDownContent">
+          <li deptId="123">1232</li>
+          <li>1232</li>
+          <li>1232</li>
+          <li>1232</li>
+          <li>1232</li>
+        </ul>
+      </div>
+      <div style="white-space: nowrap;">
+        <label for="">指纹编号：</label>
+        <input type="text" id="fingerid" style="width: 13rem;">
+        <button style="float: right; margin-right: 1rem;" class="toAdd">增加</button>
+      </div>
+      <div style="border: solid 1px #0189e0;white-space:nowrap;">
+        <label for="">人员姓名：</label>
+        <input type="text" id="pearson-name" style="width: 13rem;">
+        <button style="float: right; margin-right: 1rem;" class="toSearch">查询</button>
+      </div>
+      <!-- <div class="addContainer"><button class="toAdd">增加</button></div> -->
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>序号</th>
+          <th>人员名称</th>
+          <th>UKEY编号</th>
+          <th>指纹编号</th>
+          <th>所属处室</th>
+          <th>处室领导</th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody class="addContent"></tbody>
+    </table>
+    <div id="IDlaypage"></div>
+    <div class="sureEdit">
+      <div class="sTitle">编辑使用人信息<span class="toClose">X</span></div>
+      <div class="add">
+        <div>
+          <label for="">UKEY编号：</label>
+          <input type="text" class="user_key_serialnum">
+        </div>
+        <div>
+          <label for="">名称：</label>
+          <input type="text" class="name">
+        </div>
+        <div class="selectD fromRoom">
+          <label for="">所属处室：</label>
+          <div><p class="selectP subName"></p><span class="selectDown"></span></div>
+          <div class="lingdao"><span id="ld2"></span>处室领导</div>
+          <ul class="selectDownContent"></ul>
+        </div>
+        <div>
+          <label for="">指纹编号：</label>
+          <input type="text" class="fingerid">
+        </div>
+        <div class="toSaveC"><button>保存</button></div>
+      </div>
+    </div>
+  </div>
+  <div class="errorBox"></div>
+  <div id="shadow"></div>
+  <script src="/resource/js/jquery.min.js"></script>
+  <script src="/resource/js/laypage.js"></script>
+  <script src="/resource/js/common.js"></script>
+  <script>
+	var pageDataList={data:null,page:null,num:null};
+  $(function(){
+	//动态改变字体大小
+    $("body").css("fontSize",$("#body", parent.document).css("fontSize"));
+    window.onresize = function(){
+      $("body").css("fontSize",$("#body", parent.document).css("fontSize"));
+    }
+    $(".lingdao").on('click', 'span', function(event) {
+      $(this).toggleClass('active');
+    });
+    $('body').click(function(){
+    	$(".selectDownContent:visible").fadeOut();
+    })
+    $(".selectDown").on('click', function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      $(this).parent("div").siblings(".selectDownContent").fadeIn();
+    });
+    $(".selectDownContent").on('click', 'li', function(event) {
+      event.preventDefault();
+      $(this).parents("ul").siblings('div').find("p").text($(this).text()).attr("subDepartmentId",$(this).attr("subDepartmentId"))
+      $(".selectDownContent").fadeOut();
+    });
+     //進行页面渲染
+    var chushiId = "";
+    //获取处室
+      var branchMQuerryData = {};
+      var departNameObj;
+      var branchMQuerryUrl = "/depart/subdepartment/query?departId=0";
+      var branchMQuerryType = "get";
+      var branchMQuerrySuc = function(res){
+        /*res = JSON.parse(res);*/;
+        if(res.type==0){
+          departNameObj={};
+          chushiId = res.data.departmentList; 
+          var departmentList = res.data.departmentList //dept "subDepartmentList""
+          var tbodyHtml = "";
+          var ulHtml = "";
+          $.each(departmentList,function(index, el) {
+            ulHtml += '<li subDepartmentId="'+ el.id_sub_department +'">'+ el.name +'</li>'
+          });
+          $(".selectDownContent").html(ulHtml);
+        }else if(res.type==4){
+          window.parent.location.href = "/html/login"
+        }else{
+          toastFn(res.detail);
+          return;
+        }
+      }
+      takeAjax(branchMQuerryUrl,branchMQuerryType,branchMQuerryData,branchMQuerrySuc)
+     
+     
+    //页面初始化数据请求
+	function listPost(username){
+		var savePQuerryUrl = "/depart/user/query/"+(username?'byusername':'byuserid');
+		var savePQuerryData = username ? {userId:1,userName:username} : {userId:0};
+		$.get(savePQuerryUrl,savePQuerryData,function(res){
+			if(res.type==0){
+				pageDataList.data=res.data.userList;
+				dataRender({
+		       		laypageId:'IDlaypage',
+		       		listMain:$(".addContent"),
+		       		data:pageDataList.data, //数据
+		       		otherData:{subDepartmentList:res.data.subDepartmentList},
+		       		itemHtml:function(index,el){
+		       			//原代码开始
+						var sub_dept_id = el.sub_dept_id , deptName = "" , is_leader = "";
+						if(el.is_leader > 0) { is_leader = "是"; }
+						for (var i=0;i<this.otherData.subDepartmentList.length;i++){
+							if(this.otherData.subDepartmentList[i].id_sub_department==sub_dept_id){
+								deptName = this.otherData.subDepartmentList[i].name ;
+								break;
+							}
+						}
+						return '<tr locationId='+el.id_user+'>'+
+        				'<td>'+ (index+1) +'</td>'+
+						'<td>'+ el.name +'</td>'+
+						'<td class="safetyGrade">'+ el.user_key_serialnum +'</td>'+
+						'<td class="safetyGrade">'+ el.fingerid +'</td>'+
+						'<td class="safetyGrade">'+ deptName +'</td>'+
+						'<td class="safetyGrade">'+ is_leader +'</td>'+
+						'<td class="redact"><button>编辑</button></td>'+
+						'<td class="delate"><button>删除</button></td>'+
+						'</tr>';
+		       		}
+				});
+			}else if(res.type==4){
+				window.parent.location.href = "/html/login";
+			}else{
+				toastFn(res.detail);
+			}
+		});
+	}
+	listPost();
+	$('.toSearch').click(function(){
+		listPost($.trim($('#pearson-name').val()));
+	});
+
+
+    //增加
+    $(".toAdd").on('click', function(event) {
+		event.preventDefault();
+        //if ($(this).hasClass('toSearch')) { toSearch(); return;} //废弃的查询
+        var toAddUrl = "/depart/user/add";
+        var toAddType = "post";
+        var user_key_serialnum = $.trim($("#user_key_serialnum").val())
+        var name = $.trim($("#name").val())
+        var id_dept = GetQueryString("departId");
+        var sub_dept_id = $("#subName").attr("subDepartmentId");
+        var sub_dept_id_name = $("#subName").text();
+        var fingerid = $.trim($("#fingerid").val())
+        var description = "测试";
+        if($("#ld1").hasClass("active")){
+          var is_leader = 1;
+        }else{
+          var is_leader = 0;
+        }
+        if(!user_key_serialnum){
+          toastFn("请填写UKEY编号");
+          return;
+        }
+        if(!name){
+          toastFn("请填写名称");
+          return;
+        }
+        if(!sub_dept_id){
+          toastFn("请选择所属处室");
+          return;
+        }
+        if(!fingerid){
+          toastFn("请填写指纹编号");
+          return;
+        }
+        var toAddData = {description:description,user_key_serialnum:user_key_serialnum,name:name,id_dept:id_dept,sub_dept_id:sub_dept_id,fingerid:fingerid,is_leader:is_leader,sub_dept_id_name:sub_dept_id_name};
+        var toAddSuc = function(res){
+          if(res.type==0){
+            /*var userList = res.data.newUser;
+            var subDepartmentList = res.data.subDepartmentList;
+            var tbodyHtml = $(".addContent").html();
+            tbodyHtml += '<tr locationId='+userList.id_user+'>'+
+                            '<td>'+ userList.name +'</td>'+
+                            '<td class="safetyGrade">'+ userList.user_key_serialnum +'</td>'+
+                            '<td class="safetyGrade">'+ userList.fingerid +'</td>'+
+                            '<td class="safetyGrade">'+  toAddData.sub_dept_id_name +'</td>'+
+                            '<td class="safetyGrade">'+ userList.is_leader +'</td>'+
+                            '<td class="redact">'+
+                              '<button>编辑</button>'+
+                            '</td>'+
+                            '<td class="delate">'+
+                              '<button>删除</button>'+
+                            '</td>'+
+                          '</tr>'
+            $(".addContent").html(tbodyHtml);
+            $("#user_key_serialnum").val("");
+            $("#name").val("")
+            $("#subName").removeAttr("subDepartmentId")
+            $("#subName").text("");
+            $("#fingerid").val("");
+            $("#ld1").removeClass('active');
+			var fingerid = $.trim($("#fingerid").val());*/
+			window.location.reload();
+          }else if(res.type==4){
+            window.parent.location.href = "/html/login"
+          }else{
+            toastFn(res.detail)
+          }
+        }
+        takeAjax(toAddUrl,toAddType,toAddData,toAddSuc)
+    });
+
+  //删除
+    $("table").on('click', '.delate button',function(event) {
+      event.preventDefault();
+      var self = this;
+      var toDeleteUrl = "/depart/user/delete";
+      var toDeleteType = "post";
+      var userId = $(this).parent("td").parents("tr").attr("locationId")
+      var toDeleteData = {userId:userId};
+      var toDeleteSuc = function(res){
+        if(res.type==0){
+          $(self).parent("td").parents("tr").remove();
+          window.location.reload();
+        }else if(res.type==4){
+          window.parent.location.href = "/html/login"
+        }else{
+          toastFn(res.detail)
+        }
+      }
+      takeAjax(toDeleteUrl,toDeleteType,toDeleteData,toDeleteSuc)
+    });
+
+    //编辑
+    var parentTr;
+    $("tbody").on('click', '.redact button', function(event) {
+      event.preventDefault();
+      pageDataList.page=Number($('#IDlaypage .laypage_curr').text())||1;
+      pageDataList.num=$(this).closest('tr').index()+1;
+      var top=$('body,html').scrollTop()+20;
+      $("#shadow").fadeIn();
+      $(".sureEdit").css('top',top+'px').fadeIn();
+      parentTr = $(this).parent("td").parents("tr");
+      $(".user_key_serialnum").val(parentTr.find("td:eq(2)").text());
+      $(".name").val(parentTr.find("td:eq(1)").text())
+      var subName = parentTr.find("td:eq(4)").text();
+      $(".subName").text(subName);
+      for(var i=0; i<chushiId.length; i++){
+        if(subName = chushiId[i].name){
+          $(".subName").attr("subDepartmentId",chushiId[i].id_sub_department)
+        }
+      }
+      $(".fingerid").val(parentTr.find("td:eq(3)").text())
+      if($.trim(parentTr.find("td:eq(5)").text())==''){
+        $("#ld2").removeClass('active');
+      }else{
+        $("#ld2").addClass('active');
+      }
+      var userId = parentTr.attr("locationId");
+      $(".sureEdit").attr("userId",userId)
+    });
+    
+    //确定
+    $(".toSaveC").on('click', 'button', function(event) {
+      event.preventDefault();
+      var toReUrl = "/depart/user/update";
+      var toReType = "post";
+      var userId = $(".sureEdit").attr("userId")
+      var user_key_serialnum = $.trim($(".user_key_serialnum").val())
+      var name = $.trim($(".name").val())
+      var id_dept = GetQueryString("departId");
+      var sub_dept_id = $(".subName").attr("subDepartmentId");
+      var sub_dept_id_name = $(".subName").text();
+      var fingerid = $.trim($(".fingerid").val())
+      var description = "测试";
+      if($("#ld2").hasClass("active")){
+        var is_leader = 1;
+      }else{
+        var is_leader = 0;
+      }
+      if(!user_key_serialnum){
+        toastFn("请填写UKEY编号");
+        return;
+      }
+      if(!name){
+        toastFn("请填写名称");
+        return;
+      }
+      if(!sub_dept_id){
+        toastFn("请选择所属处室");
+        return;
+      }
+      if(!fingerid){
+        toastFn("请填写指纹编号");
+        return;
+      }
+      var toReData = {description:description,user_key_serialnum:user_key_serialnum,name:name,id_dept:id_dept,sub_dept_id:sub_dept_id,fingerid:fingerid,is_leader:is_leader,sub_dept_id_name:sub_dept_id_name,userId:userId};
+      var toReSuc = function(res){
+          if(res.type==0){
+            var userList = res.data.user,indexStart=parseInt($('td',parentTr).eq(0).text()/10)*10;
+            parentTr.remove();
+            var tbodyHtml = $(".addContent").html(),leaderText=Number(userList.is_leader)===1?'是':'';
+            tbodyHtml += '<tr locationId='+userList.id_user+'>'+
+            				'<td>'+ 0 +'</td>'+
+                            '<td>'+ userList.name +'</td>'+
+                            '<td class="safetyGrade">'+ userList.user_key_serialnum +'</td>'+
+                            '<td class="safetyGrade">'+ userList.fingerid +'</td>'+
+                            '<td class="safetyGrade">'+  toReData.sub_dept_id_name +'</td>'+
+                            '<td class="safetyGrade">'+ leaderText +'</td>'+
+                            '<td class="redact">'+
+                              '<button>编辑</button>'+
+                            '</td>'+
+                            '<td class="delate">'+
+                              '<button>删除</button>'+
+                            '</td>'+
+                          '</tr>';
+            $(".addContent").html(tbodyHtml);
+            $(".addContent tr").each(function(i){
+            	$('td',this).eq(0).text(indexStart+i+1);
+            });
+            $(".user_key_serialnum").val("");
+            $(".name").val("")
+            $(".subName").removeAttr("subDepartmentId")
+            $(".subName").text("");
+            $(".fingerid").val("")
+            $("#ld2").removeClass('active')
+            var fingerid = $.trim($("#fingerid").val());
+            $("#shadow").fadeOut();
+            $(".sureEdit").fadeOut();
+            
+            pageDataList.data[(pageDataList.page-1)*10+pageDataList.num-1]=res.data.user;
+			//window.location.reload();
+          }else if(res.type==4){
+            window.parent.location.href = "/html/login";
+          }else{
+            toastFn(res.detail);
+          }
+        }
+        takeAjax(toReUrl,toReType,toReData,toReSuc);
+    });
+
+    //取消
+    $(".cancleEdit").click(function(event) {
+      /* Act on the event */
+       $(".toClose").click()
+    });
+    $(".toClose").on('click', function(event) {
+      event.preventDefault();
+      $(".sureEdit").fadeOut();
+      $("#shadow").fadeOut();
+    });
+  })
+
+  //下方应该是一个废弃的查询
+  function toSearch() {
+    var userName = $.trim($('#pearson-name').val());
+    if (!userName) return;
+    $.get('/depart/user/query/byusername', {userId: 0, userName: userName}, function(data){
+    	if (Number(data.type)===0){
+			if (!data || !data.data || !data.data.userList) { return; }
+			var userList = data.data.userList , subDepartmentList = data.data.subDepartmentList;
+			const tdArr = [];
+			for(var i=0;i<userList.length; i++) {
+				var el = userList[i] , sub_dept_id = el.sub_dept_id , is_leader = el.is_leader > 0 ? '是' : '' , deptName = "";
+				for (var j=0;i<subDepartmentList.length;j++){
+					if(subDepartmentList[j].id_sub_department==sub_dept_id){
+						deptName = subDepartmentList[j].name ; break;
+					}
+				}
+				tdArr.push('<tr locationId='+el.id_user+'>'+
+				'<td>'+ (i+0) +'</td>'+
+				'<td>'+ el.name +'</td>'+
+				'<td class="safetyGrade">'+ el.user_key_serialnum +'</td>'+
+				'<td class="safetyGrade">'+ el.fingerid +'</td>'+
+				'<td class="safetyGrade">'+ deptName +'</td>'+
+				'<td class="safetyGrade">'+ is_leader +'</td>'+
+				'<td class="redact"><button>编辑</button></td>'+
+				'<td class="delate"><button>删除</button></td>'+
+				'</tr>');
+			}
+			$(".addContent").html(tdArr.join(''));
+		}else if(Number(data.type)==4){
+			window.parent.location.href = "/html/login";
+		}else{
+			toastFn(data.desc+' ['+data.type+']'); return false;
+		}
+    });
+  }
+  </script>
+</body>
+</html>

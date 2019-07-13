@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>载体类别</title>
+  <!-- 作者 -->
+  <meta name="author" content="yKoala">
+  <!-- 网页描述 -->
+  <meta name="description" content="系统设置--载体类别">
+  <!-- 关键字使用","分隔 -->
+  <meta name="keywords" content="载体类别">
+  <!-- 禁止浏览器从本地机的缓存中调阅页面内容 -->
+  <meta http-equiv="Pragma" content="no-cache">
+  <!-- 用来防止别人在框架里调用你的页面 -->
+  <meta http-equiv="Window-target" content="_top">
+  <!-- content的参数有all，none，index，noindex，follow，nofollow，默认是all -->
+  <meta name="robots" content="none">
+  <!-- 网页不会被缓存 -->
+  <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+  <!-- 解决部分兼容性问题，如果安装了GCF，则使用GCF来渲染页面，如果未安装GCF，则使用最高版本的IE内核进行渲染。 -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <!-- 页面按原比例显示 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/resource/css/branch.css">
+  <style>
+  .addM > div{text-align:left;width:24em;}
+  .carrierTypeCon > div > .safeG{width:5em;margin-right:0;margin-top:-2px;}
+  .carrierTypeCon .saveBtn{font-size:0.9em; margin-right:-5em;}
+  .disk{vertical-align: middle;background:none;}
+  #editsure { margin-left: 7.2em;}
+  .mT1em{margin-top:1em;}
+  </style>
+</head>
+<body>
+  <div class="branch carrierType">
+    <div class="addM carrierTypeCon">
+      <div>
+        <label for="">载体类别：</label>
+        <input type="text" class="addInput" id="carrierType">
+      </div>
+      <div>
+		<label for="">类别图标：</label>
+        <button class="toChoose uploading" id="fakeUp">选择类别图标</button>
+        <div type="text" class="safeG">
+          <img src="" alt="" id="iconpath">
+        </div>
+        <!-- <input type="file" accept="image/*" value="请点击上传图片" id="idcardP" name="idcardP" style="display:none"  class="uploading toUp"> -->
+        <form id="uploadForm" enctype='multipart/form-data' style="display:none">
+          <input type="file" id="files" name="file"/>
+        </form>
+        <button id="submit"  style="display:none">提交</button>
+        <button class="saveBtn">保存</button>
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          <th>载体类别</th>
+          <th>存放图标</th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody class="addContent">
+        
+      </tbody>
+    </table>
+    
+  </div>
+  <div class="errorBox"></div>
+  <div id="shadow"></div>
+  
+  <div class="sureEdit">
+      <div class="sTitle">编辑部门处室信息<span class="toClose">X</span></div>
+      <div class="addM carrierTypeCon addMCTC">
+        <div>
+          <label for="">载体类别：</label>
+          <input type="text" class="addInput" id="modify_typename">
+          <input type="hidden" class="addInput" id="modify_carriertype_id">
+        </div>
+        <div>
+          <label for="">类别图标：</label>
+          <button class="toChoose uploading" id="fakeUpModify">选择类别图标</button>
+          <div type="text" class="safeG">
+            <img id="modify_iconpath" src="" alt="">
+          </div>
+          <!-- <input type="file" accept="image/*" value="请点击上传图片" id="idcardP" name="idcardP" style="display:none"  class="uploading toUp"> -->
+          <form id="uploadFormModify" enctype='multipart/form-data' style="display:none">
+            <input type="file" id="filesModify" name="file"/>
+          </form>
+          <button id="submitModify"  style="display:none">提交</button>
+        </div>
+        <div class="mT1em">
+          <button id="editsure">确认</button><button id="cancleEdit">取消</button>
+        </div>
+      </div>
+    </div>
+
+  <script src="/resource/js/jquery.min.js"></script>
+  <script src="/resource/js/common.js"></script>
+  <script src="/resource/js/ajaxfileupload.js"></script>
+  <script>
+  $(function(){
+    //动态改变字体大小
+      $("body").css("fontSize",$("#body", parent.document).css("fontSize"));
+      window.onresize = function(){
+        $("body").css("fontSize",$("#body", parent.document).css("fontSize"));
+      }
+    var iconSuc = false;
+    //上传图标
+    $("#fakeUp").click(function(event) {
+      $("#files").click()
+    })
+    $("#fakeUpModify").click(function(event) {
+      $("#filesModify").click()
+    })
+    $("#files").change(function(event) {
+      $("#submit").click()
+    });
+    $("#filesModify").change(function(event) {
+        $("#submitModify").click()
+      });
+    $("#submit").click(function(){
+    	upload('uploadForm','iconpath');
+    })
+    
+    $("#submitModify").click(function(){
+    	upload('uploadFormModify','modify_iconpath');
+    })
+    
+    var upload = function(formId,iconPathId){
+    	$.ajax({
+            url:commonUrl+"/system/carriertype/upload",
+            method:"post",
+            cache: false,
+            data:new FormData($('#'+formId)[0]),
+            contentType: false,
+            processData: false,
+            dataType:"json",
+            success:function(res){
+            	
+              if(res.type==0){
+                iconSuc = true;
+                $("#"+iconPathId).attr('src',commonPicUrl+res.data.iconurl);
+              }else if(res.type==4){
+                window.parent.location.href = "/html/login"
+              }else{
+                toastFn(res.detail);
+                return;
+              }
+            },
+            error:function(res){
+            	alert(111)
+              toastFn("网络错误sss，请联系管理员！")
+            }
+          })
+    }
+
+    //页面初始化请求
+    var carrierTQuerryUrl = "/system/carriertype/query";
+    var carrierTQuerryType = "get";
+    var carrierTQuerryData = {typeId:0};
+    var carrierTQuerrySuc = function(res){
+      /*res = JSON.parse(res);*/;
+      if(res.type==0){
+        var tbodyHtml = "";
+        var carrierTypeList = res.data.carrierTypeList;
+        $.each(carrierTypeList,function(index, el) {
+          tbodyHtml +='<tr iconpath="'+commonPicUrl+el.iconpath+'" carriertype_id="'+el.carriertype_id+'" typename="'+el.typename+'">'+
+                        '<td>'+ el.carriertype_id +'</td>'+
+                        '<td class="carrierT">'+ el.typename +'</td>'+
+                        '<td class="carrierI"><img class="disk" style="width: 2em; height: 1.668em;" src="'+commonPicUrl+el.iconpath+'" /></td>'+
+                        '<td class="redact">'+
+                          '<button>编辑</button>'+
+                        '</td>'+
+                        '<td class="delate">'+
+                          '<button>删除</button>'+
+                        '</td>'+
+                      '</tr>'
+        });
+        $(".addContent").html(tbodyHtml);
+        $("#safeType").val("")
+      }else if(res.type==4){
+        window.parent.location.href = "/html/login"
+      }else{
+        toastFn(res.detail)
+      }
+    }
+    takeAjax(carrierTQuerryUrl,carrierTQuerryType,carrierTQuerryData,carrierTQuerrySuc)
+    
+    //发送请求
+    $(".saveBtn").on('click',function(event) {
+      event.preventDefault();
+      var carrierTypeInput = $.trim($("#carrierType").val());
+      var carrierUrl = "/system/carriertype/add";
+      var carrierType = "post";
+      if(!iconSuc){
+        toastFn("请先选择类别图标");
+        return;
+      }
+      if(!carrierTypeInput){
+        toastFn("请填写载体类别！");
+        return;
+      }
+      var carrierData = {name:carrierTypeInput};
+      var carrierSuc = function(res){
+        /*res = JSON.parse(res);*/;
+        if(res.type==0){
+          var carrierType = res.data.carrierType;
+          var tbodyHtml = $(".addContent").html();
+          tbodyHtml += '<tr>'+
+                        '<td>'+ carrierType.carriertype_id +'</td>'+
+                        '<td class="carrierT">'+ carrierType.typename +'</td>'+
+                        '<td class="carrierI"><img class="disk" style="width: 2em; height: 1.668em;" src="'+commonPicUrl+carrierType.iconpath+'" /></td>'+
+                        '<td class="redact">'+
+                          '<button>编辑</button>'+
+                        '</td>'+
+                        '<td class="delate">'+
+                          '<button>删除</button>'+
+                        '</td>'+
+                      '</tr>'
+          $(".addContent").html(tbodyHtml);
+          $("#carrierType").val("");
+          $(".safeG img").attr('src',"");
+          iconSuc = false;
+          window.location.reload();
+        }else if(res.type==4){
+          window.parent.location.href = "/html/login"
+        }else{
+          toastFn(res.detail)
+        }
+      }
+      takeAjax(carrierUrl,carrierType,carrierData,carrierSuc)
+
+    })
+    
+    $("tbody").on('click', '.redact button', function(event) {
+  	  event.preventDefault();
+      var top=$('body,html').scrollTop()+20;
+  	  $("#shadow").fadeIn();
+  	  $(".sureEdit").css('top',top+'px').fadeIn();
+  	  var carriertype_id = $(this).parent("td").parent("tr").attr("carriertype_id");
+  	  var typename = $(this).parent("td").parent("tr").attr("typename");
+  	  var iconpath = $(this).parent("td").parent("tr").attr("iconpath");
+  	  $("#modify_carriertype_id").val(carriertype_id);
+ 	  $("#modify_typename").val(typename);
+ 	  $("#modify_iconpath").attr("src",iconpath);
+  	});
+    
+    $("#editsure").on('click', function(event) {
+    	var typeId = $("#modify_carriertype_id").val();
+   	  	var typeName = $("#modify_typename").val();
+        var branchUrl = "/system/carriertype/update";
+        var branchType = "post";
+        var branchData = {typeId:typeId,typeName:typeName};
+        var branchSuc = function(res){
+          //res = JSON.parse(res);
+          if(res.type==0){
+            $(".sureEdit").fadeOut();
+            $("#shadow").fadeOut();
+            window.location.reload();
+           // $("#addInput").val("")
+          }else if(res.type==4){
+            window.parent.location.href = "/html/login"
+          }else{
+            toastFn(res.detail);
+            return;
+          }
+        }
+        takeAjax(branchUrl,branchType,branchData,branchSuc)
+  	  });
+    
+    $("tbody").on('click', '.delate button', function(event) {
+    	var typename = $(this).parent("td").parent("tr").attr("typename");
+    	if(!confirm("确认删除<"+typename+">")){
+    		return ;
+    	}
+    	var typeId = $(this).parent("td").parent("tr").attr("carriertype_id");
+        var branchUrl = "/system/carriertype/delete";
+        var branchType = "post";
+        var branchData = {typeId:typeId};
+        var branchSuc = function(res){
+          //res = JSON.parse(res);
+          if(res.type==0){
+            window.location.reload();
+           // $("#addInput").val("")
+          }else if(res.type==4){
+            window.parent.location.href = "/html/login"
+          }else{
+            toastFn(res.detail);
+            return;
+          }
+        }
+        takeAjax(branchUrl,branchType,branchData,branchSuc)
+  	  });
+    
+    
+  })
+  </script>
+</body>
+</html>
