@@ -1,0 +1,73 @@
+1-------4门 15 命令有反应  
+
+eb 柜体号  柜门号  09 00 07 第几个载体  该载体的第几个标签 30 30 30 30 30  后面的五个30代表00 根据卡片修改
+
+
+
+@RequestMapping(value = "/out/approve",method = RequestMethod.POST)
+	public @ResponseBody Response carrierOutApprove(HttpServletRequest request,
+				@Range(min = 0, message="状态值超出范围")
+				Integer subDeptId,
+				@Length(min = 0,max = 30,message="姓名过长")
+				String name,
+				@Validated VTimeRange vTimeRange ,BindingResult br )throws CodeException{//@DateFormate yyyy:MM:dd hh:mm:ss
+		
+			if(subDeptId == null && name == null && name.isEmpty() && vTimeRange ==null) {
+				return response(ErrorCode.ConditionNotEnough);
+			}
+			
+			Manager manager = this.getManager(request);//验证有无权限.
+			Integer departId = manager.getDeptid();
+			
+			String startTime = vTimeRange.getStartTime(), endTime = vTimeRange.getEndTime();
+			
+			boolean byDate = startTime != null && !startTime.isEmpty() && endTime != null && !endTime.isEmpty();
+			TimeRange timeRange = byDate ? new TimeRange(vTimeRange) : new TimeRange();//获取用于承载的实体类对象.这里已经转化为时间戳.
+			//如果没填时间查询的是处室/某个人/最后一条表单--这几个条件必须有一条必填--没有between 时间戳 需要分组 max(id)
+			//如果填写了时间查询的是时间段下部门/处室/某个人的所有表单/--有between时间戳,不需要分组..
+			List<OutCarrier> outCarrier = new ArrayList<OutCarrier>();
+			List<User> userList = new ArrayList<User>();
+			List<Integer> userIdList = new ArrayList<Integer>();
+			
+			if(name != null) {
+				User user = ResourceContext.INSTANCE.userService.selectByUserName(name);
+				userList.add(user);
+			}else if(subDeptId != null){
+				
+				userList = ResourceContext.INSTANCE.userService.selectBySubDeptId(subDeptId);
+			}else {
+				userList = ResourceContext.INSTANCE.userService.selectByDeptId(departId);
+			}
+			userIdList = userList.stream().map(User :: getId_user).collect(Collectors.toList());
+			
+			if(byDate) {
+				outCarrier = ResourceContext.INSTANCE.outCarrierService.selectByUserIdListAndTimeRange(timeRange.start, timeRange.end, userIdList);
+			}else {
+				//不按时间查最后一次..
+				//outCarrier = ResourceContext.INSTANCE.outCarrierService.selectByUserIdList(userIdList);
+				outCarrier = ResourceContext.INSTANCE.outCarrierService.selectLatest(departId);//该部门下所有载体最后一次借出
+				for(OutCarrier oc : outCarrier) {
+					if(!userList.contains(oc.getUser_id())) {
+						outCarrier.remove(oc);
+					}
+				}
+				
+			}
+			
+			Map<Integer, List<OutCarrier>> data=new HashMap<>();
+			
+			for(OutCarrier oc : outCarrier) {
+				if(data.get(oc.getOut_id()) == null) {//如果没添加过的out
+					List<OutCarrier> newOutCarrier = new ArrayList<>();
+					newOutCarrier.add(oc);
+					data.put(oc.getOut_id(),newOutCarrier);
+				}else {
+					data.get(oc.getOut_id()).add(oc);
+				}
+			}
+			
+			return response(ErrorCode.Success, data);
+			
+
+		
+	}
